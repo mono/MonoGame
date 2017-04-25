@@ -85,9 +85,9 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             // out of the main assembly, they are registered here before their use.
 
             //TypeDescriptor.AddAttributes(typeof(Single), new TypeConverterAttribute(typeof(SingleTypeConverter)));
-            TypeDescriptor.AddAttributes(typeof(Vector2), new TypeConverterAttribute(typeof(Vector2TypeConverter)));
-            TypeDescriptor.AddAttributes(typeof(Vector3), new TypeConverterAttribute(typeof(Vector3TypeConverter)));
-            TypeDescriptor.AddAttributes(typeof(Vector4), new TypeConverterAttribute(typeof(Vector4TypeConverter)));
+            TypeDescriptor.AddAttributes(typeof(Vector2), new TypeConverterAttribute(typeof(Vector2Converter)));
+            TypeDescriptor.AddAttributes(typeof(Vector3), new TypeConverterAttribute(typeof(Vector3Converter)));
+            TypeDescriptor.AddAttributes(typeof(Vector4), new TypeConverterAttribute(typeof(Vector4Converter)));
             //TypeDescriptor.AddAttributes(typeof(IPackedVector), new TypeConverterAttribute(typeof(PackedVectorTypeConverter)));
         }
 

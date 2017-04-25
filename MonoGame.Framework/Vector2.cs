@@ -12,7 +12,7 @@ namespace Microsoft.Xna.Framework
     /// Describes a 2D-vector.
     /// </summary>
 #if XNADESIGNPROVIDED
-    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector2TypeConverter))]
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector2Converter))]
 #endif
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]

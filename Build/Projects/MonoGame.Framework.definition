@@ -1415,19 +1415,31 @@
     </Compile>
 
     <!-- Microsoft.Xna.Framework.Design -->
+    <Compile Include="Design\MathTypeConverter.cs">
+      <Services>_XNADesignProvided</Services>
+    </Compile>
     <Compile Include="Design\VectorConversion.cs">
       <Services>_XNADesignProvided</Services>
     </Compile>
-    <Compile Include="Design\Vector2TypeConverter.cs">
+    <Compile Include="Design\Vector2Converter.cs">
       <Services>_XNADesignProvided</Services>
     </Compile>
-    <Compile Include="Design\Vector3TypeConverter.cs">
+    <Compile Include="Design\Vector3Converter.cs">
       <Services>_XNADesignProvided</Services>
     </Compile>
-    <Compile Include="Design\Vector4TypeConverter.cs">
+    <Compile Include="Design\Vector4Converter.cs">
       <Services>_XNADesignProvided</Services>
     </Compile>
-
+	<Compile Include="Design\ColorConverter.cs">
+      <Services>_XNADesignProvided</Services>
+    </Compile>
+	<Compile Include="Design\PointConverter.cs">
+      <Services>_XNADesignProvided</Services>
+    </Compile>	
+	<Compile Include="Design\RectangleConverter.cs">
+      <Services>_XNADesignProvided</Services>
+    </Compile>	
+	
     <!-- OpenGL Stock Effects -->
     <EmbeddedResource Include="Graphics\Effect\Resources\AlphaTestEffect.ogl.mgfxo">
       <Services>_GLCompatible</Services>

@@ -12,7 +12,7 @@ namespace Microsoft.Xna.Framework
     /// Describes a 4D-vector.
     /// </summary>
 #if XNADESIGNPROVIDED
-    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector4TypeConverter))]
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.Vector4Converter))]
 #endif
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]

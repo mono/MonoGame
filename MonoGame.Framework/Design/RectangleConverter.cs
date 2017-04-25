@@ -8,11 +8,11 @@ using System.Globalization;
 
 namespace Microsoft.Xna.Framework.Design
 {
-    public class Vector3TypeConverter : TypeConverter
+    public class RectangleConverter : MathTypeConverter
     {
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            if (VectorConversion.CanConvertTo(context, destinationType))
+            if (destinationType == typeof(Rectangle))
                 return true;
             if (destinationType == typeof(string))
                 return true;
@@ -22,26 +22,30 @@ namespace Microsoft.Xna.Framework.Design
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            var vec = (Vector3)value;
+            var rectangle = (Rectangle)value;
 
-            if (VectorConversion.CanConvertTo(context, destinationType))
+
+            if (destinationType == typeof(Point))
             {
-                var vec4 = new Vector4(vec.X, vec.Y, vec.Z, 0.0f);
-                return VectorConversion.ConvertToFromVector4(context, culture, vec4, destinationType);
+                return rectangle;
             }
 
+
             if (destinationType == typeof(string))
-            {                
-                var terms = new string[3];
-                terms[0] = vec.X.ToString("R", culture);
-                terms[1] = vec.Y.ToString("R", culture);
-                terms[2] = vec.Z.ToString("R", culture);
+            {
+                var terms = new string[4];
+                terms[0] = rectangle.X.ToString(culture);
+                terms[1] = rectangle.Y.ToString(culture);
+                terms[2] = rectangle.Width.ToString(culture);
+                terms[3] = rectangle.Height.ToString(culture);
+
 
                 return string.Join(culture.TextInfo.ListSeparator + " ", terms);
             }
 
             return base.ConvertTo(context, culture, value, destinationType);
         }
+
 
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
@@ -54,18 +58,20 @@ namespace Microsoft.Xna.Framework.Design
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var sourceType = value.GetType();
-            var vec = Vector3.Zero;
+            var rectangle = Rectangle.Empty;
 
             if (sourceType == typeof(string))
             {
-                var str = (string)value;
-                var words = str.Split(culture.TextInfo.ListSeparator.ToCharArray());
+                int[] parts = new int[4];
 
-                vec.X = float.Parse(words[0], culture);
-                vec.Y = float.Parse(words[1], culture);
-                vec.Z = float.Parse(words[2], culture);
+                StringToList((string)value, culture, ref parts);
 
-                return vec;
+                rectangle.X = parts[0];
+                rectangle.Y = parts[1];
+                rectangle.Width = parts[2];
+                rectangle.Height = parts[3];
+
+                return rectangle;
             }
 
             return base.ConvertFrom(context, culture, value);

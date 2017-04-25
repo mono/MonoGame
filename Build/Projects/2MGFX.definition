@@ -145,14 +145,26 @@
     <Compile Include="..\..\MonoGame.Framework\Vector4.cs">
       <Link>MonoGame.Framework\Vector4.cs</Link>
     </Compile>
-    <Compile Include="..\..\MonoGame.Framework\Design\Vector2TypeConverter.cs">
-      <Link>MonoGame.Framework\Design\Vector2TypeConverter.cs</Link>
+    <Compile Include="..\..\MonoGame.Framework\Design\Vector2Converter.cs">
+      <Link>MonoGame.Framework\Design\Vector2Converter.cs</Link>
     </Compile>
-    <Compile Include="..\..\MonoGame.Framework\Design\Vector3TypeConverter.cs">
-      <Link>MonoGame.Framework\Design\Vector3TypeConverter.cs</Link>
+    <Compile Include="..\..\MonoGame.Framework\Design\Vector3Converter.cs">
+      <Link>MonoGame.Framework\Design\Vector3Converter.cs</Link>
     </Compile>
-    <Compile Include="..\..\MonoGame.Framework\Design\Vector4TypeConverter.cs">
-      <Link>MonoGame.Framework\Design\Vector4TypeConverter.cs</Link>
+    <Compile Include="..\..\MonoGame.Framework\Design\Vector4Converter.cs">
+      <Link>MonoGame.Framework\Design\Vector4Converter.cs</Link>
+    </Compile>	
+    <Compile Include="..\..\MonoGame.Framework\Design\ColorConverter.cs">
+      <Link>MonoGame.Framework\Design\ColorConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\MonoGame.Framework\Design\PointConverter.cs">
+      <Link>MonoGame.Framework\Design\PointConverter.cs</Link>
+    </Compile>	
+    <Compile Include="..\..\MonoGame.Framework\Design\RectangleConverter.cs">
+      <Link>MonoGame.Framework\Design\RectangleConverter.cs</Link>
+    </Compile>	
+    <Compile Include="..\..\MonoGame.Framework\Design\MathTypeConverter.cs">
+      <Link>MonoGame.Framework\Design\MathTypeConverter.cs</Link>
     </Compile>
     <Compile Include="..\..\MonoGame.Framework\Design\VectorConversion.cs">
       <Link>MonoGame.Framework\Design\VectorConversion.cs</Link>

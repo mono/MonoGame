@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace Microsoft.Xna.Framework.Design
 {
-    public class Vector2TypeConverter : TypeConverter
+    public class Vector4Converter : MathTypeConverter
     {
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
@@ -22,19 +22,20 @@ namespace Microsoft.Xna.Framework.Design
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            var vec = (Vector2)value;
+            var vec = (Vector4)value;
 
             if (VectorConversion.CanConvertTo(context, destinationType))
             {
-                var vec4 = new Vector4(vec.X, vec.Y, 0.0f, 0.0f);
-                return VectorConversion.ConvertToFromVector4(context, culture, vec4, destinationType);
+                return VectorConversion.ConvertToFromVector4(context, culture, vec, destinationType);
             }
 
             if (destinationType == typeof(string))
             {
-                var terms = new string[2];
+                var terms = new string[4];
                 terms[0] = vec.X.ToString("R", culture);
                 terms[1] = vec.Y.ToString("R", culture);
+                terms[2] = vec.Z.ToString("R", culture);
+                terms[3] = vec.W.ToString("R", culture);
 
                 return string.Join(culture.TextInfo.ListSeparator + " ", terms);
             }
@@ -53,7 +54,7 @@ namespace Microsoft.Xna.Framework.Design
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var sourceType = value.GetType();
-            var vec = Vector2.Zero;
+            var vec = Vector4.Zero;
 
             if (sourceType == typeof(string))
             {
@@ -62,6 +63,8 @@ namespace Microsoft.Xna.Framework.Design
 
                 vec.X = float.Parse(words[0], culture);
                 vec.Y = float.Parse(words[1], culture);
+                vec.Z = float.Parse(words[2], culture);
+                vec.W = float.Parse(words[3], culture);
 
                 return vec;
             }
@@ -70,3 +73,4 @@ namespace Microsoft.Xna.Framework.Design
         }
     }
 }
+    

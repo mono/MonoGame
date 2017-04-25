@@ -13,6 +13,9 @@ namespace Microsoft.Xna.Framework
     /// </summary>
     [DataContract]
     [DebuggerDisplay("{DebugDisplayString,nq}")]
+#if XNADESIGNPROVIDED
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Xna.Framework.Design.RectangleConverter))]
+#endif
     public struct Rectangle : IEquatable<Rectangle>
     {
         #region Private Fields
