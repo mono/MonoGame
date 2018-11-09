@@ -169,6 +169,10 @@ namespace Microsoft.Xna.Framework
                         _view.CallTextInput(c, key);
                     }
                 }
+                else if (ev.Type == Sdl.EventType.DropFile)
+                {
+                    _view.CallFileDrop(Sdl.GetString(ev.Drop.File));
+                }
                 else if (ev.Type == Sdl.EventType.WindowEvent)
                 {
                     if (ev.Window.EventID == Sdl.Window.EventId.Resized || ev.Window.EventID == Sdl.Window.EventId.SizeChanged)

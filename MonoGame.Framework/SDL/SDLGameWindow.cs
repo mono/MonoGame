@@ -302,6 +302,11 @@ namespace Microsoft.Xna.Framework
             OnTextInput(this, new TextInputEventArgs(c, key));
         }
 
+        public void CallFileDrop(string filepath)
+        {
+            OnFileDropped(this, filepath);
+        }
+
         protected internal override void SetSupportedOrientations(DisplayOrientation orientations)
         {
             // Nothing to do here
