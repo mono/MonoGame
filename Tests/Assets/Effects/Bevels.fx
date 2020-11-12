@@ -4,15 +4,16 @@
 
 #include "include.fxh"
 
-sampler s0;
+sampler s0 : register(s0);
+Texture2D tex : register(t0);
 
 float4 PixelShaderFunction( float4 inPosition : SV_Position,
 			    float4 inColor : COLOR0,
-			    float2 coords : TEXCOORD0 ) : COLOR0
+			    float2 coords : TEXCOORD0 ) : SV_TARGET
 {
-    float4 color = tex2D(s0, coords);
-	color -= tex2D(s0, coords - 0.002) * 2.5f;
-	color += tex2D(s0, coords + 0.002) * 2.5f;
+    float4 color = tex.Sample(s0, coords);
+    color -= tex.Sample(s0, coords - 0.002) * 2.5f;
+    color += tex.Sample(s0, coords + 0.002) * 2.5f;
 
     return color;
 }

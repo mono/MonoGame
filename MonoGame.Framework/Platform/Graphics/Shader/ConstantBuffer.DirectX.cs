@@ -42,12 +42,10 @@ namespace Microsoft.Xna.Framework.Graphics
                 d3dContext.UpdateSubresource(_buffer, _cbuffer);
                 _dirty = false;
             }
-            
+
             // Set the buffer to the right stage.
-            if (stage == ShaderStage.Vertex)
-                d3dContext.VertexShader.SetConstantBuffer(slot, _cbuffer);
-            else
-                d3dContext.PixelShader.SetConstantBuffer(slot, _cbuffer);
+            SharpDX.Direct3D11.CommonShaderStage shaderStageDX = device.GetDXShaderStage(stage);
+            shaderStageDX.SetConstantBuffer(slot, _cbuffer);
         }
 
         protected override void Dispose(bool disposing)

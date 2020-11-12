@@ -4,22 +4,15 @@
 
 #include "include.fxh"
 
-Texture2D SourceTexture;
-Texture2D OtherTexture;
+Texture2D SourceTexture : register(t0);
+Texture2D OtherTexture : register(t1);
 
-sampler2D SourceSampler = sampler_state
-{
-    Texture = (SourceTexture);
-};
+sampler SourceSampler : register(s0);
+sampler OtherSampler : register(s1);
 
-sampler2D OtherSampler = sampler_state
+float4 PS_Main(float2 uv : TEXCOORD0) : SV_TARGET
 {
-    Texture = (OtherTexture);
-};
-
-float4 PS_Main(float2 uv : TEXCOORD0) : COLOR0
-{
-    return tex2D(SourceSampler, uv) + tex2D(OtherSampler, uv);
+    return SourceTexture.Sample(SourceSampler, uv) + OtherTexture.Sample(OtherSampler, uv);
 }
 
 technique

@@ -26,6 +26,8 @@ namespace MonoGame.Effect
 
         public static readonly ShaderProfile OpenGL = FromName("OpenGL");
 
+        public static readonly ShaderProfile OpenGLES = FromName("OpenGLES");
+
         public static readonly ShaderProfile DirectX_11 = FromName("DirectX_11");
 
         /// <summary>
@@ -54,24 +56,28 @@ namespace MonoGame.Effect
             return _profiles.FirstOrDefault(p => p.Name == name);
         }
 
-        internal abstract void AddMacros(Dictionary<string, string> macros);
+        internal abstract void AddMacros(Dictionary<string, string> macros, Options options);
 
         internal abstract void ValidateShaderModels(PassInfo pass);
 
-        internal abstract ShaderData CreateShader(ShaderResult shaderResult, string shaderFunction, string shaderProfile, bool isVertexShader, EffectObject effect, ref string errorsAndWarnings);
+        internal abstract ShaderData CreateShader(ShaderResult shaderResult, string shaderFunction, string shaderProfile, ShaderStage shaderStage, EffectObject effect, ref string errorsAndWarnings);
 
-        protected static void ParseShaderModel(string text, Regex regex, out int major, out int minor)
+        internal abstract Regex GetShaderModelRegex(ShaderStage stage);
+
+        protected static void ParseShaderModel(string text, Regex regex, out int major, out int minor, out string extension)
         {
             var match = regex.Match(text);
             if (!match.Success)
             {
                 major = 0;
                 minor = 0;
+                extension = "";
                 return;
             }
 
             major = int.Parse(match.Groups["major"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             minor = int.Parse(match.Groups["minor"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+            extension = match.Groups["exctension"].Value;
         }
 
         private class StringConverter : TypeConverter

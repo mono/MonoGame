@@ -9,7 +9,7 @@ namespace MonoGame.Effect
     {
         public ConstantBufferData(SharpDX.D3DCompiler.ConstantBuffer cb)
         {
-            Name = string.Empty;
+            Name = cb.Description.Name;
             Size = cb.Description.Size;
 
             ParameterIndex = new List<int>();
@@ -107,25 +107,31 @@ namespace MonoGame.Effect
             }
             else
             {
-                param.member_handles = new EffectObject.d3dx_parameter[param.element_count];
-                for (var i = 0; i < param.element_count; i++)
-                {
-                    var mparam = new EffectObject.d3dx_parameter();
-
-                    mparam.name = string.Empty;
-                    mparam.semantic = string.Empty;
-                    mparam.type = param.type;
-                    mparam.class_ = param.class_;
-                    mparam.rows = param.rows;
-                    mparam.columns = param.columns;
-                    mparam.data = new byte[param.columns * param.rows * 4];
-
-                    param.member_handles[i] = mparam;
-                }
+                param.member_handles = CreateArrayFromParameter(param);
             }
 
             return param;
         }
 
+        private static EffectObject.d3dx_parameter[] CreateArrayFromParameter(EffectObject.d3dx_parameter param)
+        {
+            var array = new EffectObject.d3dx_parameter[param.element_count];
+            for (var i = 0; i < param.element_count; i++)
+            {
+                var mparam = new EffectObject.d3dx_parameter();
+
+                mparam.name = string.Empty;
+                mparam.semantic = string.Empty;
+                mparam.type = param.type;
+                mparam.class_ = param.class_;
+                mparam.rows = param.rows;
+                mparam.columns = param.columns;
+                mparam.data = new byte[param.columns * param.rows * 4];
+
+                array[i] = mparam;
+            }
+
+            return array;
+        }
     }
 }

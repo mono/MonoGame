@@ -27,7 +27,7 @@ float4 VS_Main(float4 position : POSITION0) : SV_Position0
 	return float4(1, 2, 3, 4);
 }
 
-float4 PS_Main(float4 position : SV_Position) : COLOR0
+float4 PS_Main(float4 position : SV_Position) : SV_TARGET
 {
 	return 1;
 }

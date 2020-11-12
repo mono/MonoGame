@@ -16,6 +16,10 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private readonly string _name;
 
+        private readonly string _instanceName;
+
+        private Effect _effect;
+
         private ulong _stateKey;
 
         private bool _dirty;
@@ -24,14 +28,16 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return _dirty; }
         }
 
-        public ConstantBuffer(ConstantBuffer cloneSource)
+        public ConstantBuffer(ConstantBuffer cloneSource, Effect effect)
         {
             GraphicsDevice = cloneSource.GraphicsDevice;
 
             // Share the immutable types.
             _name = cloneSource._name;
+            _instanceName = cloneSource._instanceName;
             _parameters = cloneSource._parameters;
             _offsets = cloneSource._offsets;
+            _effect = effect;
 
             // Clone the mutable types.
             _buffer = (byte[])cloneSource._buffer.Clone();
@@ -42,16 +48,18 @@ namespace Microsoft.Xna.Framework.Graphics
                               int sizeInBytes,
                               int[] parameterIndexes,
                               int[] parameterOffsets,
-                              string name)
+                              string name,
+                              string instanceName,
+                              Effect effect)
         {
             GraphicsDevice = device;
 
             _buffer = new byte[sizeInBytes];
-
             _parameters = parameterIndexes;
             _offsets = parameterOffsets;
-
             _name = name;
+            _instanceName = instanceName;
+            _effect = effect;
 
             PlatformInitialize();
         }
@@ -94,9 +102,9 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 var source = data as Array;
 
-                var stride = (columns*elementSize);
+                var stride = columns * elementSize;
                 for (var y = 0; y < rows; y++)
-                    Buffer.BlockCopy(source, stride*y, _buffer, offset + (rowSize*y), columns*elementSize);
+                    Buffer.BlockCopy(source, stride*y, _buffer, offset + (rowSize*y), stride);
             }
         }
 

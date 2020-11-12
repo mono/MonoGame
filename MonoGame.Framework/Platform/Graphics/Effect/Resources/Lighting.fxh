@@ -19,18 +19,32 @@ ColorPair ComputeLights(float3 eyeVector, float3 worldNormal, uniform int numLig
     float3x3 lightDiffuse = 0;
     float3x3 lightSpecular = 0;
     float3x3 halfVectors = 0;
-    
-    [unroll]
-    for (int i = 0; i < numLights; i++)
+      
+    if (numLights > 0)
     {
-        lightDirections[i] = float3x3(DirLight0Direction,     DirLight1Direction,     DirLight2Direction)    [i];
-        lightDiffuse[i]    = float3x3(DirLight0DiffuseColor,  DirLight1DiffuseColor,  DirLight2DiffuseColor) [i];
-        lightSpecular[i]   = float3x3(DirLight0SpecularColor, DirLight1SpecularColor, DirLight2SpecularColor)[i];
-        
-        halfVectors[i] = normalize(eyeVector - lightDirections[i]);
+        lightDirections[0] = DirLight0Direction;
+        lightDiffuse[0]    = DirLight0DiffuseColor;
+        lightSpecular[0]   = DirLight0SpecularColor;
+        halfVectors[0] = normalize(eyeVector - lightDirections[0]);
+    }
+    
+    if (numLights > 1)
+    {
+        lightDirections[1] = DirLight1Direction;
+        lightDiffuse[1]    = DirLight1DiffuseColor;
+        lightSpecular[1]   = DirLight1SpecularColor;
+        halfVectors[1] = normalize(eyeVector - lightDirections[1]);
+    }
+    
+    if (numLights > 2)
+    {
+        lightDirections[2] = DirLight2Direction;
+        lightDiffuse[2]    = DirLight2DiffuseColor;
+        lightSpecular[2]   = DirLight2SpecularColor;
+        halfVectors[2] = normalize(eyeVector - lightDirections[2]);
     }
 
-    float3 dotL = mul(-lightDirections, worldNormal);
+    float3 dotL = mul(lightDirections*-1, worldNormal);
     float3 dotH = mul(halfVectors, worldNormal);
     
     float3 zeroL = step(float3(0,0,0), dotL);

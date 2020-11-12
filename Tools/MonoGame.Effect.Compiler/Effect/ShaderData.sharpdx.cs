@@ -6,9 +6,9 @@ namespace MonoGame.Effect
 {
     internal partial class ShaderData
     {
-        public static ShaderData CreateHLSL(byte[] byteCode, bool isVertexShader, List<ConstantBufferData> cbuffers, int sharedIndex, Dictionary<string, SamplerStateInfo> samplerStates, bool debug)
+        public static ShaderData CreateHLSL(byte[] byteCode, ShaderStage shaderStage, List<ConstantBufferData> cbuffers, int sharedIndex, Dictionary<string, SamplerStateInfo> samplerStates, bool debug)
         {
-            var dxshader = new ShaderData(isVertexShader, sharedIndex, byteCode);
+            var dxshader = new ShaderData(shaderStage, sharedIndex, byteCode);
             dxshader._attributes = new Attribute[0];
 
             // Strip the bytecode we're gonna save!

@@ -196,7 +196,10 @@ namespace MonoGame.Effect
 			VERTEXSHADER,
 			PIXELFRAGMENT,
 			VERTEXFRAGMENT,
-			UNSUPPORTED,
+            GEOMETRYSHADER,
+            HULLSHADER,
+            DOMAINSHADER,
+            UNSUPPORTED,
 			FORCE_DWORD = 0x7fffffff,
 		}
 
@@ -235,7 +238,10 @@ namespace MonoGame.Effect
 		    TRANSFORM,
 		    VERTEXSHADER,
 		    SHADERCONST,
-		    UNKNOWN,
+            GEOMETRYSHADER,
+            HULLSHADER,
+            DOMAINSHADER,
+            UNKNOWN,
 		};
 
 		public enum MATERIAL_TYPE
@@ -272,7 +278,16 @@ namespace MonoGame.Effect
 		    PSFLOAT,
 		    PSBOOL,
 		    PSINT,
-		}
+            GSFLOAT,
+            GSBOOL,
+            GSINT,
+            HSFLOAT,
+            HSBOOL,
+            HSINT,
+            DSFLOAT,
+            DSBOOL,
+            DSINT,
+        }
 
 		public enum STATE_TYPE
 		{
@@ -527,23 +542,53 @@ namespace MonoGame.Effect
 			new state_info(STATE_CLASS.VERTEXSHADER, 0, "Vertexshader"),
 			/* Pixelshader */
 			new state_info(STATE_CLASS.PIXELSHADER, 0, "Pixelshader"),
+            /* GeometryShader */
+            new state_info(STATE_CLASS.GEOMETRYSHADER, 0, "GeometryShader"),
+            /* DomainShader */
+            new state_info(STATE_CLASS.DOMAINSHADER, 0, "DomainShader"),
+            /* HullShader */
+            new state_info(STATE_CLASS.HULLSHADER, 0, "HullShader"),
 			/* Shader constants */
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstantF"),
-			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSBOOL, "VertexShaderConstantB"),
-			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSINT, "VertexShaderConstantI"),
+			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSBOOL,  "VertexShaderConstantB"),
+			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSINT,   "VertexShaderConstantI"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstant"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstant1"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstant2"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstant3"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.VSFLOAT, "VertexShaderConstant4"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstantF"),
-			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSBOOL, "PixelShaderConstantB"),
-			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSINT, "PixelShaderConstantI"),
+			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSBOOL,  "PixelShaderConstantB"),
+			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSINT,   "PixelShaderConstantI"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstant"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstant1"), /* 0xa0 */
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstant2"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstant3"),
 			new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.PSFLOAT, "PixelShaderConstant4"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstantF"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSBOOL,  "HullShaderConstantB"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSINT,   "HullShaderConstantI"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstant"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstant1"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstant2"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstant3"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.HSFLOAT, "HullShaderConstant4"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstantF"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSBOOL,  "DomainShaderConstantB"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSINT,   "DomainShaderConstantI"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstant"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstant1"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstant2"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstant3"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.DSFLOAT, "DomainShaderConstant4"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstantF"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSBOOL,  "GeometryShaderConstantB"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSINT,   "GeometryShaderConstantI"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstant"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstant1"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstant2"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstant3"),
+            new state_info(STATE_CLASS.SHADERCONST, (uint)SHADER_CONSTANT_TYPE.GSFLOAT, "GeometryShaderConstant4"),
 			/* Texture */
 			new state_info(STATE_CLASS.TEXTURE, 0, "Texture"),
 			/* Sampler states */
@@ -682,20 +727,38 @@ namespace MonoGame.Effect
                     pass.rasterizerState = pinfo.rasterizerState;
 
                     pass.state_count = 0;
-                    var tempstate = new d3dx_state[2];
+                    var tempstate = new d3dx_state[5];
 
                     shaderResult.Profile.ValidateShaderModels(pinfo);
 
                     if (!string.IsNullOrEmpty(pinfo.psFunction))
                     {
                         pass.state_count += 1;
-                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.psFunction, pinfo.psModel, false, ref errorsAndWarnings);
+                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.psFunction, pinfo.psModel, ShaderStage.PixelShader, ref errorsAndWarnings);
                     }
 
                     if (!string.IsNullOrEmpty(pinfo.vsFunction))
                     {
                         pass.state_count += 1;
-                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.vsFunction, pinfo.vsModel, true, ref errorsAndWarnings);
+                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.vsFunction, pinfo.vsModel, ShaderStage.VertexShader, ref errorsAndWarnings);
+                    }
+
+                    if (!string.IsNullOrEmpty(pinfo.hsFunction))
+                    {
+                        pass.state_count += 1;
+                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.hsFunction, pinfo.hsModel, ShaderStage.HullShader, ref errorsAndWarnings);
+                    }
+
+                    if (!string.IsNullOrEmpty(pinfo.dsFunction))
+                    {
+                        pass.state_count += 1;
+                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.dsFunction, pinfo.dsModel, ShaderStage.DomainShader, ref errorsAndWarnings);
+                    }
+
+                    if (!string.IsNullOrEmpty(pinfo.gsFunction))
+                    {
+                        pass.state_count += 1;
+                        tempstate[pass.state_count - 1] = effect.CreateShader(shaderResult, pinfo.gsFunction, pinfo.gsModel, ShaderStage.GeometryShader, ref errorsAndWarnings);
                     }
 
                     pass.states = new d3dx_state[pass.state_count];
@@ -707,6 +770,10 @@ namespace MonoGame.Effect
 
                 effect.Techniques[t] = technique;
             }
+
+            // In OpenGL, when a single sampler samples from multiple textures, we have to create separate samplers for every texture.
+            if (shaderResult.Profile is OpenGLShaderProfile profileGL)
+                profileGL.MakeSeparateSamplersForDifferentTextures(effect.Shaders);
 
             // Make the list of parameters by combining all the
             // constant buffers ignoring the buffer offsets.
@@ -792,25 +859,45 @@ namespace MonoGame.Effect
             return effect;
         }
 
-
-        private d3dx_state CreateShader(ShaderResult shaderResult, string shaderFunction, string shaderProfile, bool isVertexShader, ref string errorsAndWarnings)
+        private d3dx_state CreateShader(ShaderResult shaderResult, string shaderFunction, string shaderProfile, ShaderStage shaderStage, ref string errorsAndWarnings)
         {
             // Compile and create the shader.
-            var shaderData = shaderResult.Profile.CreateShader(shaderResult, shaderFunction, shaderProfile, isVertexShader, this, ref errorsAndWarnings);
+            var shaderData = shaderResult.Profile.CreateShader(shaderResult, shaderFunction, shaderProfile, shaderStage, this, ref errorsAndWarnings);
 
             var state = new d3dx_state();
             state.index = 0;
             state.type = STATE_TYPE.CONSTANT;
-            state.operation = isVertexShader ? (uint)146 : (uint)147;
-
             state.parameter = new d3dx_parameter();
             state.parameter.name = string.Empty;
             state.parameter.semantic = string.Empty;
             state.parameter.class_ = D3DXPARAMETER_CLASS.OBJECT;
-            state.parameter.type = isVertexShader ? D3DXPARAMETER_TYPE.VERTEXSHADER : D3DXPARAMETER_TYPE.PIXELSHADER;
             state.parameter.rows = 0;
             state.parameter.columns = 0;
             state.parameter.data = shaderData.SharedIndex;
+
+            switch (shaderStage)
+            {
+                case ShaderStage.VertexShader:
+                    state.operation = (uint)146;
+                    state.parameter.type = D3DXPARAMETER_TYPE.VERTEXSHADER;
+                    break;
+                case ShaderStage.PixelShader:
+                    state.operation = (uint)147;
+                    state.parameter.type = D3DXPARAMETER_TYPE.PIXELSHADER;
+                    break;
+                case ShaderStage.GeometryShader:
+                    state.operation = (uint)148;
+                    state.parameter.type = D3DXPARAMETER_TYPE.GEOMETRYSHADER;
+                    break;
+                case ShaderStage.HullShader:
+                    state.operation = (uint)150;
+                    state.parameter.type = D3DXPARAMETER_TYPE.HULLSHADER;
+                    break;
+                case ShaderStage.DomainShader:
+                    state.operation = (uint)149;
+                    state.parameter.type = D3DXPARAMETER_TYPE.DOMAINSHADER;
+                    break;
+            }
 
             return state;
         }
@@ -841,6 +928,6 @@ namespace MonoGame.Effect
         public List<ShaderData> Shaders { get; private set; }
 
         public List<ConstantBufferData> ConstantBuffers { get; private set; }
-	}
+    }
 }
 

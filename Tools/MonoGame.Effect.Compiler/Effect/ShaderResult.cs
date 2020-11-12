@@ -39,7 +39,7 @@ namespace MonoGame.Effect
             var macros = new Dictionary<string, string>();
             macros.Add("MGFX", "1");
 
-            options.Profile.AddMacros(macros);
+            options.Profile.AddMacros(macros, options);
 
             // If we're building shaders for debug set that flag too.
             if (options.Debug)
@@ -47,8 +47,7 @@ namespace MonoGame.Effect
 
             if (!string.IsNullOrEmpty(options.Defines))
             {
-                var defines = options.Defines.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var define in defines)
+                foreach (var define in options.GetDefines())
                 {
                     var name = define;
                     var value = "1";
@@ -74,16 +73,9 @@ namespace MonoGame.Effect
             var dependencies = new List<string>();
             newFile = Preprocessor.Preprocess(effectSource, fullPath, macros, dependencies, output);
 
-            // Parse the resulting file for techniques and passes.
+            // Parse the resulting file for techniques and passes.  
             var tree = new Parser(new Scanner()).Parse(newFile, fullPath);
-            if (tree.Errors.Count > 0)
-            {
-                var errors = String.Empty;
-                foreach (var error in tree.Errors)
-                    errors += string.Format("{0}({1},{2}) : {3}\r\n", error.File, error.Line, error.Column, error.Message);
-
-                throw new Exception(errors);
-            }
+            HandleParseErrors(tree);
 
             // Evaluate the results of the parse tree.
             var shaderInfo = tree.Eval() as ShaderInfo;
@@ -124,6 +116,18 @@ namespace MonoGame.Effect
 
             return result;
         }
+
+        public static void HandleParseErrors(ParseTree tree)
+        {
+            if (tree.Errors.Count > 0)
+            {
+                var errors = String.Empty;
+                foreach (var error in tree.Errors)
+                    errors += string.Format("{0}({1},{2}) : {3}\r\n", error.File, error.Line, error.Column, error.Message);
+
+                throw new Exception(errors);
+            }
+        }
                 
         public static void WhitespaceNodes(TokenType type, List<ParseNode> nodes, ref string sourceFile)
         {
@@ -139,7 +143,7 @@ namespace MonoGame.Effect
                 // Get the full content of this node.
                 var start = n.Token.StartPos;
                 var end = n.Token.EndPos;
-                var length = end - n.Token.StartPos;
+                var length = end - start;
                 var content = sourceFile.Substring(start, length);
 
                 // Replace the content of this node with whitespace.

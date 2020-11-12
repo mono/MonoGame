@@ -2,6 +2,11 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using System;
+using System.Reflection.Metadata.Ecma335;
+using System.Linq;
+using System.Collections.Generic;
+
 namespace MonoGame.Effect
 {
     public class Options
@@ -20,5 +25,12 @@ namespace MonoGame.Effect
 
         [CommandLineParser.Name("Defines", "\t - Semicolon-delimited define assignments")]
         public string Defines;
+
+        public bool IsDefined(string define) => GetDefines()
+            .FirstOrDefault(d => d == define) != null;
+
+        public IEnumerable<string> GetDefines() => (Defines ?? "")
+            .Split(';', StringSplitOptions.RemoveEmptyEntries)
+            .Select(d => d.Trim());
     }
 }

@@ -8,9 +8,9 @@ namespace MonoGame.Effect
 {
 	internal partial class ShaderData
 	{
-        public static ShaderData CreateGLSL(byte[] byteCode, bool isVertexShader, List<ConstantBufferData> cbuffers, int sharedIndex, Dictionary<string, SamplerStateInfo> samplerStates, bool debug)
+        public static ShaderData CreateGLSL_Mojo(byte[] byteCode, ShaderStage shaderStage, List<ConstantBufferData> cbuffers, int sharedIndex, Dictionary<string, SamplerStateInfo> samplerStates, bool debug)
 		{
-            var dxshader = new ShaderData(isVertexShader, sharedIndex, byteCode);
+            var dxshader = new ShaderData(shaderStage, sharedIndex, byteCode);
 
 			// Use MojoShader to convert the HLSL bytecode to GLSL.
 
@@ -137,11 +137,11 @@ namespace MonoGame.Effect
 			    dxshader._samplers[i] = sampler;
 			}
 
-			// Gather all the parameters used by this shader.
-			var symbol_types = new [] { 
-				new { name = dxshader.IsVertexShader ? "vs_uniforms_bool" : "ps_uniforms_bool", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_BOOL, },
-				new { name = dxshader.IsVertexShader ? "vs_uniforms_ivec4" : "ps_uniforms_ivec4", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_INT4, },
-				new { name = dxshader.IsVertexShader ? "vs_uniforms_vec4" : "ps_uniforms_vec4", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_FLOAT4, },
+            // Gather all the parameters used by this shader.
+            var symbol_types = new [] { 
+				new { name = dxshader.ShaderStage == ShaderStage.VertexShader ? "vs_uniforms_bool" : "ps_uniforms_bool", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_BOOL, },
+				new { name = dxshader.ShaderStage == ShaderStage.VertexShader ? "vs_uniforms_ivec4" : "ps_uniforms_ivec4", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_INT4, },
+				new { name = dxshader.ShaderStage == ShaderStage.VertexShader ? "vs_uniforms_vec4" : "ps_uniforms_vec4", set = MojoShader.MOJOSHADER_symbolRegisterSet.MOJOSHADER_SYMREGSET_FLOAT4, },
 			};
 
 			var cbuffer_index = new List<int> ();
@@ -171,7 +171,7 @@ namespace MonoGame.Effect
 
 			// Add the required precision specifiers for GLES.
 
-            var floatPrecision = dxshader.IsVertexShader ? "precision highp float;\r\n" : "precision mediump float;\r\n";
+            var floatPrecision = dxshader.ShaderStage == ShaderStage.VertexShader ? "precision highp float;\r\n" : "precision mediump float;\r\n";
 
 			glslCode = "#ifdef GL_ES\r\n" +
                  floatPrecision +

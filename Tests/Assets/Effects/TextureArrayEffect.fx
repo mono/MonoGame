@@ -27,7 +27,7 @@ VSOutput VS_Main(uint VertexID : SV_VertexID)
     return output;
 }
 
-float4 PS_Main(PSInput input) : COLOR0
+float4 PS_Main(PSInput input) : SV_TARGET
 {
     return Texture.Sample(TextureSampler, float3(input.TexCoord, (uint) input.PositionSS.x % 4));
 }

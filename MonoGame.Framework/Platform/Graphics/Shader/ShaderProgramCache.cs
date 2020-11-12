@@ -63,23 +63,28 @@ namespace Microsoft.Xna.Framework.Graphics
             _programCache.Clear();
         }
 
-        public ShaderProgram GetProgram(Shader vertexShader, Shader pixelShader)
+        public ShaderProgram GetProgram(Shader vertexShader, Shader pixelShader, Shader hullShader, Shader domainShader, Shader geometryShader)
         {
             // TODO: We should be hashing in the mix of constant 
             // buffers here as well.  This would allow us to optimize
             // setting uniforms to only when a constant buffer changes.
 
-            var key = vertexShader.HashKey | pixelShader.HashKey;
+            var key = vertexShader.HashKey ^ pixelShader.HashKey;
+            if (hullShader != null && domainShader != null)
+                key ^= hullShader.HashKey ^ domainShader.HashKey;
+            if (geometryShader != null)
+                key ^= geometryShader.HashKey;
+
             if (!_programCache.ContainsKey(key))
             {
                 // the key does not exist so we need to link the programs
-                _programCache.Add(key, Link(vertexShader, pixelShader));
+                _programCache.Add(key, Link(vertexShader, pixelShader, hullShader, domainShader, geometryShader));
             }
 
             return _programCache[key];
         }
 
-        private ShaderProgram Link(Shader vertexShader, Shader pixelShader)
+        private ShaderProgram Link(Shader vertexShader, Shader pixelShader, Shader hullShader, Shader domainShader, Shader geometryShader)
         {
             // NOTE: No need to worry about background threads here
             // as this is only called at draw time when we're in the
@@ -93,6 +98,21 @@ namespace Microsoft.Xna.Framework.Graphics
             GL.AttachShader(program, pixelShader.GetShaderHandle());
             GraphicsExtensions.CheckGLError();
 
+            if (hullShader != null && domainShader != null)
+            {
+                GL.AttachShader(program, hullShader.GetShaderHandle());
+                GraphicsExtensions.CheckGLError();
+
+                GL.AttachShader(program, domainShader.GetShaderHandle());
+                GraphicsExtensions.CheckGLError();
+            }
+
+            if (geometryShader != null)
+            {
+                GL.AttachShader(program, geometryShader.GetShaderHandle());
+                GraphicsExtensions.CheckGLError();
+            }
+
             //vertexShader.BindVertexAttributes(program);
 
             GL.LinkProgram(program);
@@ -103,18 +123,37 @@ namespace Microsoft.Xna.Framework.Graphics
 
             vertexShader.GetVertexAttributeLocations(program);
 
+            vertexShader.ApplySamplerTextureUnits(program);
             pixelShader.ApplySamplerTextureUnits(program);
+            
+            if (hullShader != null && domainShader != null)
+            {
+                hullShader.ApplySamplerTextureUnits(program);
+                domainShader.ApplySamplerTextureUnits(program);
+            }
+            if (geometryShader != null)
+                geometryShader.ApplySamplerTextureUnits(program);
 
             var linked = 0;
 
             GL.GetProgram(program, GetProgramParameterName.LinkStatus, out linked);
-            GraphicsExtensions.LogGLError("VertexShaderCache.Link(), GL.GetProgram");
+            GraphicsExtensions.LogGLError("ShaderProgramCache.Link(), GL.GetProgram");
             if (linked == (int)Bool.False)
             {
                 var log = GL.GetProgramInfoLog(program);
                 Console.WriteLine(log);
+
                 GL.DetachShader(program, vertexShader.GetShaderHandle());
                 GL.DetachShader(program, pixelShader.GetShaderHandle());
+
+                if (hullShader != null && domainShader != null)
+                {
+                    GL.DetachShader(program, hullShader.GetShaderHandle());
+                    GL.DetachShader(program, domainShader.GetShaderHandle());
+                }
+                if (geometryShader != null)
+                    GL.DetachShader(program, geometryShader.GetShaderHandle());
+
                 _graphicsDevice.DisposeProgram(program);
                 throw new InvalidOperationException("Unable to link effect program");
             }

@@ -34,9 +34,9 @@ namespace Microsoft.Xna.Framework.Graphics
             // If the shader has already been created then return it.
             if (_shaderHandle != -1)
                 return _shaderHandle;
-            
+
             //
-            _shaderHandle = GL.CreateShader(Stage == ShaderStage.Vertex ? ShaderType.VertexShader : ShaderType.FragmentShader);
+            _shaderHandle = GL.CreateShader(ShaderStageToOGLShaderType(Stage));
             GraphicsExtensions.CheckGLError();
             GL.ShaderSource(_shaderHandle, _glslCode);
             GraphicsExtensions.CheckGLError();
@@ -87,7 +87,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 GraphicsExtensions.CheckGLError();
                 if (loc != -1)
                 {
-                    GL.Uniform1(loc, sampler.textureSlot);
+                    GL.Uniform1(loc, sampler.samplerSlot);
                     GraphicsExtensions.CheckGLError();
                 }
             }
@@ -99,6 +99,25 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 GraphicsDevice.DisposeShader(_shaderHandle);
                 _shaderHandle = -1;
+            }
+        }
+
+        private ShaderType ShaderStageToOGLShaderType(ShaderStage stage)
+        {
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    return ShaderType.VertexShader;
+                case ShaderStage.Pixel:
+                    return ShaderType.FragmentShader;
+                case ShaderStage.Hull:
+                    return ShaderType.TesselationControlShader;
+                case ShaderStage.Domain:
+                    return ShaderType.TesselationEvaluationShader;
+                case ShaderStage.Geometry:
+                    return ShaderType.GeometryShader;
+                default:
+                    throw new ArgumentException("ShaderStage not supported: " + stage);
             }
         }
 

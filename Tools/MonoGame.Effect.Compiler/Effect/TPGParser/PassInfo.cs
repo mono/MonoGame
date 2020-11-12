@@ -15,6 +15,15 @@ namespace MonoGame.Effect.TPGParser
         public string psModel;
         public string psFunction;
 
+        public string hsModel;
+        public string hsFunction;
+
+        public string dsModel;
+        public string dsFunction;
+
+        public string gsModel;
+        public string gsFunction;
+
         public BlendState blendState;
         public RasterizerState rasterizerState;
         public DepthStencilState depthStencilState;

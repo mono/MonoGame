@@ -6,8 +6,11 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         private readonly Effect _effect;
 
-		private readonly Shader _pixelShader;
         private readonly Shader _vertexShader;
+        private readonly Shader _pixelShader;
+        private readonly Shader _hullShader;
+        private readonly Shader _domainShader;
+        private readonly Shader _geometryShader;
 
         private readonly BlendState _blendState;
         private readonly DepthStencilState _depthStencilState;
@@ -20,7 +23,10 @@ namespace Microsoft.Xna.Framework.Graphics
         internal EffectPass(    Effect effect, 
                                 string name,
                                 Shader vertexShader, 
-                                Shader pixelShader, 
+                                Shader pixelShader,  
+                                Shader hullShader,
+                                Shader domainShader,
+                                Shader geometryShader,
                                 BlendState blendState, 
                                 DepthStencilState depthStencilState, 
                                 RasterizerState rasterizerState,
@@ -35,6 +41,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
             _vertexShader = vertexShader;
             _pixelShader = pixelShader;
+            _hullShader = hullShader;
+            _domainShader = domainShader;
+            _geometryShader = geometryShader;
 
             _blendState = blendState;
             _depthStencilState = depthStencilState;
@@ -58,6 +67,9 @@ namespace Microsoft.Xna.Framework.Graphics
             Annotations = cloneSource.Annotations;
             _vertexShader = cloneSource._vertexShader;
             _pixelShader = cloneSource._pixelShader;
+            _hullShader = cloneSource._hullShader;
+            _domainShader = cloneSource._domainShader;
+            _geometryShader = cloneSource._geometryShader;
         }
 
         public void Apply()
@@ -103,6 +115,51 @@ namespace Microsoft.Xna.Framework.Graphics
                     var cb = _effect.ConstantBuffers[_pixelShader.CBuffers[c]];
                     cb.Update(_effect.Parameters);
                     device.SetConstantBuffer(ShaderStage.Pixel, c, cb);
+                }
+            }
+
+            device.HullShader = _hullShader;
+
+            if (_hullShader != null)
+            {
+                // Update the texture parameters, shared with Vertex shader state
+                SetShaderSamplers(_hullShader, device.HullTextures, device.HullSamplerStates);
+
+                for (var c = 0; c < _hullShader.CBuffers.Length; c++)
+                {
+                    var cb = _effect.ConstantBuffers[_hullShader.CBuffers[c]];
+                    cb.Update(_effect.Parameters);
+                    device.SetConstantBuffer(ShaderStage.Hull, c, cb);
+                }
+            }
+
+            device.DomainShader = _domainShader;
+
+            if (_domainShader != null)
+            {
+                // Update the texture parameters, shared with vertex shader state.
+                SetShaderSamplers(_domainShader, device.DomainTextures, device.DomainSamplerStates);
+
+                for (var c = 0; c < _domainShader.CBuffers.Length; c++)
+                {
+                    var cb = _effect.ConstantBuffers[_domainShader.CBuffers[c]];
+                    cb.Update(_effect.Parameters);
+                    device.SetConstantBuffer(ShaderStage.Domain, c, cb);
+                }
+            }
+
+            device.GeometryShader = _geometryShader;
+
+            if (_geometryShader != null)
+            {
+                // Update the constant buffers.
+                SetShaderSamplers(_geometryShader, device.GeometryTextures, device.GeometrySamplerStates);
+
+                for (var c = 0; c < _geometryShader.CBuffers.Length; c++)
+                {
+                    var cb = _effect.ConstantBuffers[_geometryShader.CBuffers[c]];
+                    cb.Update(_effect.Parameters);
+                    device.SetConstantBuffer(ShaderStage.Geometry, c, cb);
                 }
             }
 

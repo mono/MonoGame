@@ -104,18 +104,15 @@ namespace Microsoft.Xna.Framework.Graphics
 #else
             SupportsSRgb = GL.Extensions.Contains("GL_EXT_texture_sRGB") && GL.Extensions.Contains("GL_EXT_framebuffer_sRGB");
             SupportsFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.Extensions.Contains("GL_ARB_texture_float"));
-            SupportsHalfFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.Extensions.Contains("GL_ARB_half_float_pixel"));;
-            SupportsNormalized = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.Extensions.Contains("GL_EXT_texture_norm16"));;
+            SupportsHalfFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.Extensions.Contains("GL_ARB_half_float_pixel"));
+            SupportsNormalized = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.Extensions.Contains("GL_EXT_texture_norm16"));
 #endif
 
-            // TODO: Implement OpenGL support for texture arrays
-            // once we can author shaders that use texture arrays.
-            SupportsTextureArrays = false;
+            SupportsTextureArrays = device.glMajorVersion >= 3 || GL.Extensions.Contains("EXT_texture_array");
 
             SupportsDepthClamp = GL.Extensions.Contains("GL_ARB_depth_clamp");
 
-            SupportsVertexTextures = false; // For now, until we implement vertex textures in OpenGL.
-
+            SupportsVertexTextures = device.MaxVertexTextureSlots > 0; 
 
             GL.GetInteger((GetPName)GetParamName.MaxSamples, out _maxMultiSampleCount);
 

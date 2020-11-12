@@ -74,6 +74,7 @@
   </ItemGroup>
 
   <Import Project="Platform\OpenGL.targets" />
+  <Import Project="Platform\OpenGLESResources.targets" />
   <Import Project="Platform\OpenAL.targets" />
   <Import Project="Platform\Microsoft.Devices.Sensors.targets" />
 </Project>

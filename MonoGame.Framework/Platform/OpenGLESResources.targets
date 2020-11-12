@@ -1,0 +1,12 @@
+<Project>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\AlphaTestEffect.ogles.mgfxo" />
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\BasicEffect.ogles.mgfxo" />
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\DualTextureEffect.ogles.mgfxo" />
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\EnvironmentMapEffect.ogles.mgfxo" />
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\SkinnedEffect.ogles.mgfxo" />
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\SpriteEffect.ogles.mgfxo" />
+  </ItemGroup>
+
+</Project>

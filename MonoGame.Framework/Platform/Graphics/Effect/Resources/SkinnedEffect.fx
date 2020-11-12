@@ -53,16 +53,14 @@ END_CONSTANTS
 #include "Common.fxh"
 #include "Lighting.fxh"
 
-
 void Skin(inout VSInputNmTxWeights vin, uniform int boneCount)
 {
     float4x3 skinning = 0;
 
-    [unroll]
-    for (int i = 0; i < boneCount; i++)
-    {
-        skinning += Bones[vin.Indices[i]] * vin.Weights[i];
-    }
+    if (boneCount > 0) skinning += Bones[vin.Indices[0]] * vin.Weights[0];
+    if (boneCount > 1) skinning += Bones[vin.Indices[1]] * vin.Weights[1];
+    if (boneCount > 2) skinning += Bones[vin.Indices[2]] * vin.Weights[2];
+    if (boneCount > 3) skinning += Bones[vin.Indices[3]] * vin.Weights[3];
 
     vin.Position.xyz = mul(vin.Position, skinning);
     vin.Normal = mul(vin.Normal, (float3x3)skinning);

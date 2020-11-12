@@ -80,7 +80,7 @@ struct VSInputNmTxWeights
     float4 Position : POSITION0;
     float3 Normal   : NORMAL0;
     float2 TexCoord : TEXCOORD0;
-    uint4  Indices  : BLENDINDICES0;
+    int4  Indices  : BLENDINDICES0;
     float4 Weights  : BLENDWEIGHT0;
 };
 

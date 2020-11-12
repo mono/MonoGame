@@ -4,16 +4,16 @@ namespace MonoGame.Effect
 {
 	internal partial class ShaderData
 	{
-		public ShaderData(bool isVertexShader, int sharedIndex, byte[] bytecode)
+		public ShaderData(ShaderStage shaderStage, int sharedIndex, byte[] bytecode)
 		{
-			IsVertexShader = isVertexShader;
-			SharedIndex = sharedIndex;
+            ShaderStage = shaderStage;
+            SharedIndex = sharedIndex;
 			Bytecode = (byte[])bytecode.Clone();	    
 		}
 
-		public bool IsVertexShader { get; private set; }
+        public ShaderStage ShaderStage { get; private set; }
 
-		public struct Sampler
+        public struct Sampler
 		{
 			public MojoShader.MOJOSHADER_samplerType type;
 			public int textureSlot;

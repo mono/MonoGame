@@ -30,7 +30,10 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         private void PlatformConstruct(int width, int height, bool mipmap, SurfaceFormat format, SurfaceType type, bool shared)
         {
-            this.glTarget = TextureTarget.Texture2D;
+            if (ArraySize > 1)
+                glTarget = TextureTarget.Texture2DArray;
+            else
+                glTarget = TextureTarget.Texture2D;
             format.GetGLFormat(GraphicsDevice, out glInternalFormat, out glFormat, out glType);
             Threading.BlockOnUIThread(() =>
             {
@@ -62,14 +65,16 @@ namespace Microsoft.Xna.Framework.Graphics
                             int hBlocks = (h + (blockHeight - 1)) / blockHeight;
                             imageSize = wBlocks * hBlocks * blockSize;
                         }
-                        GL.CompressedTexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, imageSize, IntPtr.Zero);
-                        GraphicsExtensions.CheckGLError();
+                        if (glTarget == TextureTarget.Texture2D)
+                            GL.CompressedTexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, imageSize, IntPtr.Zero);
+                        else
+                            throw new NotImplementedException("Compressed TextureArrays are not implemented on DesktopGL");
                     }
+                    else if (glTarget == TextureTarget.Texture2D)
+                        GL.TexImage2D(glTarget, level, glInternalFormat, w, h, 0, glFormat, glType, IntPtr.Zero);
                     else
-                    {
-                        GL.TexImage2D(TextureTarget.Texture2D, level, glInternalFormat, w, h, 0, glFormat, glType, IntPtr.Zero);
-                        GraphicsExtensions.CheckGLError();
-                    }
+                        GL.TexImage3D(glTarget, level, glInternalFormat, w, h, ArraySize, 0, glFormat, glType, IntPtr.Zero);
+                    GraphicsExtensions.CheckGLError();
 
                     if ((w == 1 && h == 1) || !mipmap)
                         break;
@@ -149,11 +154,17 @@ namespace Microsoft.Xna.Framework.Graphics
                     var startBytes = startIndex * elementSizeInByte;
                     var dataPtr = new IntPtr(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
                     // Store the current bound texture.
-                    var prevTexture = GraphicsExtensions.GetBoundTexture2D();
+
+                    int prevTexture;
+                    if (glTarget == TextureTarget.Texture2D)
+                        GL.GetInteger(GetPName.TextureBinding2D, out prevTexture);
+                    else 
+                        GL.GetInteger(GetPName.TextureBinding2DArray, out prevTexture);
+                    GraphicsExtensions.CheckGLError();
 
                     if (prevTexture != glTexture)
                     {
-                        GL.BindTexture(TextureTarget.Texture2D, glTexture);
+                        GL.BindTexture(glTarget, glTexture);
                         GraphicsExtensions.CheckGLError();
                     }
 
@@ -161,15 +172,15 @@ namespace Microsoft.Xna.Framework.Graphics
                     GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
 
                     if (glFormat == (PixelFormat)GLPixelFormat.CompressedTextureFormats)
-                    {
-                        GL.CompressedTexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y, rect.Width, rect.Height,
-                            (PixelInternalFormat)glInternalFormat, elementCount * elementSizeInByte, dataPtr);
-                    }
+                        if (glTarget == TextureTarget.Texture2D)
+                            GL.CompressedTexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y, rect.Width, rect.Height,
+                                (PixelInternalFormat)glInternalFormat, elementCount * elementSizeInByte, dataPtr);
+                        else
+                            throw new NotImplementedException("Compressed TextureArrays are not implemented on DesktopGL");
+                    else if (glTarget == TextureTarget.Texture2D)
+                        GL.TexSubImage2D(glTarget, level, rect.X, rect.Y, rect.Width, rect.Height, glFormat, glType, dataPtr);
                     else
-                    {
-                        GL.TexSubImage2D(TextureTarget.Texture2D, level, rect.X, rect.Y,
-                            rect.Width, rect.Height, glFormat, glType, dataPtr);
-                    }
+                        GL.TexSubImage3D(glTarget, level, rect.X, rect.Y, arraySlice, rect.Width, rect.Height, 1, glFormat, glType, dataPtr);
                     GraphicsExtensions.CheckGLError();
 
 #if !ANDROID
@@ -181,7 +192,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     // Restore the bound texture.
                     if (prevTexture != glTexture)
                     {
-                        GL.BindTexture(TextureTarget.Texture2D, prevTexture);
+                        GL.BindTexture(glTarget, prevTexture);
                         GraphicsExtensions.CheckGLError();
                     }
                 }
@@ -409,32 +420,32 @@ namespace Microsoft.Xna.Framework.Graphics
                 if (((width & (width - 1)) != 0) || ((height & (height - 1)) != 0))
                     wrap = TextureWrapMode.ClampToEdge;
 
-                GL.BindTexture(TextureTarget.Texture2D, this.glTexture);
+                GL.BindTexture(glTarget, this.glTexture);
                 GraphicsExtensions.CheckGLError();
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                GL.TexParameter(glTarget, TextureParameterName.TextureMinFilter,
                                 (_levelCount > 1) ? (int)TextureMinFilter.LinearMipmapLinear : (int)TextureMinFilter.Linear);
                 GraphicsExtensions.CheckGLError();
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                GL.TexParameter(glTarget, TextureParameterName.TextureMagFilter,
                                 (int)TextureMagFilter.Linear);
                 GraphicsExtensions.CheckGLError();
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)wrap);
+                GL.TexParameter(glTarget, TextureParameterName.TextureWrapS, (int)wrap);
                 GraphicsExtensions.CheckGLError();
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)wrap);
+                GL.TexParameter(glTarget, TextureParameterName.TextureWrapT, (int)wrap);
                 GraphicsExtensions.CheckGLError();
                 // Set mipmap levels
 #if !GLES
-                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureBaseLevel, 0);
+                GL.TexParameter(glTarget, TextureParameterName.TextureBaseLevel, 0);
 #endif
                 GraphicsExtensions.CheckGLError();
                 if (GraphicsDevice.GraphicsCapabilities.SupportsTextureMaxLevel)
                 {
                     if (_levelCount > 0)
                     {
-                        GL.TexParameter(TextureTarget.Texture2D, SamplerState.TextureParameterNameTextureMaxLevel, _levelCount - 1);
+                        GL.TexParameter(glTarget, SamplerState.TextureParameterNameTextureMaxLevel, _levelCount - 1);
                     }
                     else
                     {
-                        GL.TexParameter(TextureTarget.Texture2D, SamplerState.TextureParameterNameTextureMaxLevel, 1000);
+                        GL.TexParameter(glTarget, SamplerState.TextureParameterNameTextureMaxLevel, 1000);
                     }
                     GraphicsExtensions.CheckGLError();
                 }

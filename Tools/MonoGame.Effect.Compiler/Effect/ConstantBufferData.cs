@@ -6,6 +6,8 @@ namespace MonoGame.Effect
     {
         public string Name { get; private set; }
 
+        public string InstanceName { get; private set; }
+
         public int Size { get; private set; }
 
         public List<int> ParameterIndex { get; private set; }
@@ -17,6 +19,7 @@ namespace MonoGame.Effect
         public ConstantBufferData(string name)
         {
             Name = name;
+            InstanceName = "";
 
             ParameterIndex = new List<int>();
             ParameterOffset = new List<int>();

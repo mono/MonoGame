@@ -86,13 +86,27 @@ namespace Microsoft.Xna.Framework.Graphics
 
         internal GraphicsCapabilities GraphicsCapabilities { get; private set; }
 
+        public TextureCollection Textures { get; private set; }
+
         public TextureCollection VertexTextures { get; private set; }
+
+        public TextureCollection HullTextures { get; private set; }
+
+        public TextureCollection DomainTextures { get; private set; }
+
+        public TextureCollection GeometryTextures { get; private set; }
+
+        public SamplerStateCollection SamplerStates { get; private set; }
 
         public SamplerStateCollection VertexSamplerStates { get; private set; }
 
-        public TextureCollection Textures { get; private set; }
+        public SamplerStateCollection HullSamplerStates { get; private set; }
 
-        public SamplerStateCollection SamplerStates { get; private set; }
+        public SamplerStateCollection DomainSamplerStates { get; private set; }
+
+        public SamplerStateCollection GeometrySamplerStates { get; private set; }
+
+      
 
         /// <summary>
         /// Get or set the color a <see cref="RenderTarget2D"/> is cleared to when it is set.
@@ -122,8 +136,41 @@ namespace Microsoft.Xna.Framework.Graphics
             get { return _pixelShaderDirty; }
         }
 
+        /// <summary>
+        /// The active domain shader.
+        /// </summary>
+        private Shader _domainShader;
+        private bool _domainShaderDirty;
+        private bool DomainShaderDirty
+        {
+            get { return _domainShaderDirty; }
+        }
+
+        /// <summary>
+        /// The active hull shader.
+        /// </summary>
+        private Shader _hullShader;
+        private bool _hullShaderDirty;
+        private bool HullShaderDirty
+        {
+            get { return _hullShaderDirty; }
+        }
+
+        /// <summary>
+        /// The active geometry shader.
+        /// </summary>
+        private Shader _geometryShader;
+        private bool _geometryShaderDirty;
+        private bool GeometryShaderDirty
+        {
+            get { return _geometryShaderDirty; }
+        }
+
         private readonly ConstantBufferCollection _vertexConstantBuffers = new ConstantBufferCollection(ShaderStage.Vertex, 16);
         private readonly ConstantBufferCollection _pixelConstantBuffers = new ConstantBufferCollection(ShaderStage.Pixel, 16);
+        private readonly ConstantBufferCollection _hullConstantBuffers = new ConstantBufferCollection(ShaderStage.Hull, 16);
+        private readonly ConstantBufferCollection _domainConstantBuffers = new ConstantBufferCollection(ShaderStage.Domain, 16);
+        private readonly ConstantBufferCollection _geometryConstantBuffers = new ConstantBufferCollection(ShaderStage.Geometry, 16);
 
         /// <summary>
         /// The cache of effects from unique byte streams.
@@ -296,11 +343,36 @@ namespace Microsoft.Xna.Framework.Graphics
 
             PlatformSetup();
 
-            VertexTextures = new TextureCollection(this, MaxVertexTextureSlots, true);
-            VertexSamplerStates = new SamplerStateCollection(this, MaxVertexTextureSlots, true);
+            Textures = new TextureCollection(this, MaxTextureSlots);
+            SamplerStates = new SamplerStateCollection(this, MaxTextureSlots);
 
-            Textures = new TextureCollection(this, MaxTextureSlots, false);
-            SamplerStates = new SamplerStateCollection(this, MaxTextureSlots, false);
+            // In DirectX we use separate texture/sampler collections for every shader stage.
+            // In OpenGL we use one big texture/sampler collection for all stages.
+#if OPENGL
+            VertexTextures = Textures;
+            HullTextures = Textures;
+            DomainTextures = Textures;
+            GeometryTextures = Textures;
+            Textures = Textures;
+
+            VertexSamplerStates = SamplerStates;
+            HullSamplerStates = SamplerStates;
+            DomainSamplerStates = SamplerStates;
+            GeometrySamplerStates = SamplerStates;
+            SamplerStates = SamplerStates;
+#else
+            VertexTextures = new TextureCollection(this, MaxVertexTextureSlots);
+            HullTextures = new TextureCollection(this, MaxVertexTextureSlots);
+            DomainTextures = new TextureCollection(this, MaxVertexTextureSlots);
+            GeometryTextures = new TextureCollection(this, MaxVertexTextureSlots);
+            Textures = new TextureCollection(this, MaxTextureSlots);
+
+            VertexSamplerStates = new SamplerStateCollection(this, MaxVertexTextureSlots);
+            HullSamplerStates = new SamplerStateCollection(this, MaxVertexTextureSlots);
+            DomainSamplerStates = new SamplerStateCollection(this, MaxVertexTextureSlots);
+            GeometrySamplerStates = new SamplerStateCollection(this, MaxVertexTextureSlots);
+            SamplerStates = new SamplerStateCollection(this, MaxTextureSlots);
+#endif
 
             _blendStateAdditive = BlendState.Additive.Clone();
             _blendStateAlphaBlend = BlendState.AlphaBlend.Clone();
@@ -364,14 +436,24 @@ namespace Microsoft.Xna.Framework.Graphics
 
             // Clear the texture and sampler collections forcing
             // the state to be reapplied.
+            Textures.Clear();         
             VertexTextures.Clear();
-            VertexSamplerStates.Clear();
-            Textures.Clear();
+            HullTextures.Clear();
+            DomainTextures.Clear();
+            GeometryTextures.Clear();
+
             SamplerStates.Clear();
+            VertexSamplerStates.Clear();
+            HullSamplerStates.Clear();
+            DomainSamplerStates.Clear();
+            GeometrySamplerStates.Clear();
 
             // Clear constant buffers
             _vertexConstantBuffers.Clear();
             _pixelConstantBuffers.Clear();
+            _hullConstantBuffers.Clear();
+            _domainConstantBuffers.Clear();
+            _geometryConstantBuffers.Clear();
 
             // Force set the buffers and shaders on next ApplyState() call
             _vertexBuffers = new VertexBufferBindings(_maxVertexBufferSlots);
@@ -379,6 +461,9 @@ namespace Microsoft.Xna.Framework.Graphics
             _indexBufferDirty = true;
             _vertexShaderDirty = true;
             _pixelShaderDirty = true;
+            _hullShaderDirty = true;
+            _domainShaderDirty = true;
+            _geometryShaderDirty = true;
 
             // Set the default scissor rect.
             _scissorRectangleDirty = true;
@@ -974,7 +1059,6 @@ namespace Microsoft.Xna.Framework.Graphics
         internal Shader VertexShader
         {
             get { return _vertexShader; }
-
             set
             {
                 if (_vertexShader == value)
@@ -989,7 +1073,6 @@ namespace Microsoft.Xna.Framework.Graphics
         internal Shader PixelShader
         {
             get { return _pixelShader; }
-
             set
             {
                 if (_pixelShader == value)
@@ -1001,12 +1084,70 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
+        internal Shader HullShader
+        {
+            get { return _hullShader; }
+            set
+            {
+                if (_hullShader == value)
+                    return;
+
+                _hullShader = value;
+                _hullConstantBuffers.Clear();
+                _hullShaderDirty = true;
+            }
+        }
+
+        internal Shader DomainShader
+        {
+            get { return _domainShader; }
+            set
+            {
+                if (_domainShader == value)
+                    return;
+
+                _domainShader = value;
+                _domainConstantBuffers.Clear();
+                _domainShaderDirty = true;
+            }
+        }
+
+        internal Shader GeometryShader
+        {
+            get { return _geometryShader; }
+            set
+            {
+                if (_geometryShader == value)
+                    return;
+
+                _geometryShader = value;
+                _geometryConstantBuffers.Clear();
+                _geometryShaderDirty = true;
+            }
+        }
+
         internal void SetConstantBuffer(ShaderStage stage, int slot, ConstantBuffer buffer)
         {
-            if (stage == ShaderStage.Vertex)
-                _vertexConstantBuffers[slot] = buffer;
-            else
-                _pixelConstantBuffers[slot] = buffer;
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    _vertexConstantBuffers[slot] = buffer;
+                    break;
+                case ShaderStage.Pixel:
+                    _pixelConstantBuffers[slot] = buffer;
+                    break;
+                case ShaderStage.Hull:
+                    _hullConstantBuffers[slot] = buffer;
+                    break;
+                case ShaderStage.Domain:
+                    _domainConstantBuffers[slot] = buffer;
+                    break;
+                case ShaderStage.Geometry:
+                    _geometryConstantBuffers[slot] = buffer;
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
         }
 
         public bool ResourcesLost { get; set; }
@@ -1044,6 +1185,14 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (_indexBuffer == null)
                 throw new InvalidOperationException("Index buffer must be set before calling DrawIndexedPrimitives.");
+
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
@@ -1095,6 +1244,14 @@ namespace Microsoft.Xna.Framework.Graphics
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
 
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
+
             var vertexCount = GetElementCountArray(primitiveType, primitiveCount);
 
             if (vertexOffset + vertexCount > vertexData.Length)
@@ -1128,6 +1285,14 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
+
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
 
             var vertexCount = GetElementCountArray(primitiveType, primitiveCount);
 
@@ -1201,6 +1366,14 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
+
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
 
             if (indexOffset + GetElementCountArray(primitiveType, primitiveCount) > indexData.Length)
                 throw new ArgumentOutOfRangeException("primitiveCount");
@@ -1282,6 +1455,14 @@ namespace Microsoft.Xna.Framework.Graphics
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
 
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
+
             if (indexOffset + GetElementCountArray(primitiveType, primitiveCount) > indexData.Length)
                 throw new ArgumentOutOfRangeException("primitiveCount");
 
@@ -1352,6 +1533,14 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (_indexBuffer == null)
                 throw new InvalidOperationException("Index buffer must be set before calling DrawInstancedPrimitives.");
+
+            bool isPatchPrimitives = primitiveType >= PrimitiveType.PatchListWith1ControlPoints && primitiveType <= PrimitiveType.PatchListWith32ControlPoints;
+
+            if (_hullShader == null && isPatchPrimitives)
+                throw new ArgumentException("Patch primitives can only be drawn when a hull shader is active");
+
+            if (_hullShader != null && !isPatchPrimitives)
+                throw new ArgumentException("If a hull shader is active the primitive type must be one of the patch types");
 
             if (primitiveCount <= 0)
                 throw new ArgumentOutOfRangeException("primitiveCount");
@@ -1428,16 +1617,86 @@ namespace Microsoft.Xna.Framework.Graphics
             switch (primitiveType)
             {
                 case PrimitiveType.LineList:
+                case PrimitiveType.LineListWithAdjacency:
                     return primitiveCount * 2;
                 case PrimitiveType.LineStrip:
+                case PrimitiveType.LineStripWithAdjacency:
                     return primitiveCount + 1;
                 case PrimitiveType.TriangleList:
+                case PrimitiveType.TriangleListWithAdjacency:
                     return primitiveCount * 3;
                 case PrimitiveType.TriangleStrip:
+                case PrimitiveType.TriangleStripWithAdjacency:
                     return primitiveCount + 2;
+                case PrimitiveType.PointList:
+                    return primitiveCount;
+                case PrimitiveType.PatchListWith1ControlPoints:
+                    return primitiveCount * 1;
+                case PrimitiveType.PatchListWith2ControlPoints:
+                    return primitiveCount * 2;
+                case PrimitiveType.PatchListWith3ControlPoints:
+                    return primitiveCount * 3;
+                case PrimitiveType.PatchListWith4ControlPoints:
+                    return primitiveCount * 4;
+                case PrimitiveType.PatchListWith5ControlPoints:
+                    return primitiveCount * 5;
+                case PrimitiveType.PatchListWith6ControlPoints:
+                    return primitiveCount * 6;
+                case PrimitiveType.PatchListWith7ControlPoints:
+                    return primitiveCount * 7;
+                case PrimitiveType.PatchListWith8ControlPoints:
+                    return primitiveCount * 8;
+                case PrimitiveType.PatchListWith9ControlPoints:
+                    return primitiveCount * 9;
+                case PrimitiveType.PatchListWith10ControlPoints:
+                    return primitiveCount * 10;
+                case PrimitiveType.PatchListWith11ControlPoints:
+                    return primitiveCount * 11;
+                case PrimitiveType.PatchListWith12ControlPoints:
+                    return primitiveCount * 12;
+                case PrimitiveType.PatchListWith13ControlPoints:
+                    return primitiveCount * 13;
+                case PrimitiveType.PatchListWith14ControlPoints:
+                    return primitiveCount * 14;
+                case PrimitiveType.PatchListWith15ControlPoints:
+                    return primitiveCount * 15;
+                case PrimitiveType.PatchListWith16ControlPoints:
+                    return primitiveCount * 16;
+                case PrimitiveType.PatchListWith17ControlPoints:
+                    return primitiveCount * 17;
+                case PrimitiveType.PatchListWith18ControlPoints:
+                    return primitiveCount * 18;
+                case PrimitiveType.PatchListWith19ControlPoints:
+                    return primitiveCount * 19;
+                case PrimitiveType.PatchListWith20ControlPoints:
+                    return primitiveCount * 20;
+                case PrimitiveType.PatchListWith21ControlPoints:
+                    return primitiveCount * 21;
+                case PrimitiveType.PatchListWith22ControlPoints:
+                    return primitiveCount * 22;
+                case PrimitiveType.PatchListWith23ControlPoints:
+                    return primitiveCount * 23;
+                case PrimitiveType.PatchListWith24ControlPoints:
+                    return primitiveCount * 24;
+                case PrimitiveType.PatchListWith25ControlPoints:
+                    return primitiveCount * 25;
+                case PrimitiveType.PatchListWith26ControlPoints:
+                    return primitiveCount * 26;
+                case PrimitiveType.PatchListWith27ControlPoints:
+                    return primitiveCount * 27;
+                case PrimitiveType.PatchListWith28ControlPoints:
+                    return primitiveCount * 28;
+                case PrimitiveType.PatchListWith29ControlPoints:
+                    return primitiveCount * 29;
+                case PrimitiveType.PatchListWith30ControlPoints:
+                    return primitiveCount * 30;
+                case PrimitiveType.PatchListWith31ControlPoints:
+                    return primitiveCount * 31;
+                case PrimitiveType.PatchListWith32ControlPoints:
+                    return primitiveCount * 32;
+                default:
+                    throw new ArgumentException();
             }
-
-            throw new NotSupportedException();
         }
 
         // uniformly scales down the given rectangle by 10%

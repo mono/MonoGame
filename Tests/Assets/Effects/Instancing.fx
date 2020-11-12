@@ -36,7 +36,7 @@ VSOutput VS(VSInput input, float4x4 worldTransposed : BLENDWEIGHT)
     return output;
 }
 
-float4 PS(PSInput input) : COLOR0
+float4 PS(PSInput input) : SV_TARGET
 {
     return float4(input.TexCoord.xy, 0, 1);
 }
