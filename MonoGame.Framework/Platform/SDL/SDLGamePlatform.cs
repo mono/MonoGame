@@ -15,22 +15,22 @@ namespace Microsoft.Xna.Framework
 {
     internal class SdlGamePlatform : GamePlatform
     {
-        public override GameRunBehavior DefaultRunBehavior
-        {
-            get { return GameRunBehavior.Synchronous; }
-        }
+        private const int MouseButtonMaxTime = 1;
 
         private readonly Game _game;
         private readonly List<Keys> _keys;
 
         private int _isExiting;
+        private uint _resetButtonFlags;
         private SdlGameWindow _view;
+        private Dictionary<Sdl.Mouse.Button, uint> _mouseButtonTimeTracker;
 
         public SdlGamePlatform(Game game)
             : base(game)
         {
             _game = game;
             _keys = new List<Keys>();
+            _mouseButtonTimeTracker = new Dictionary<Sdl.Mouse.Button, uint>();
             Keyboard.SetKeys(_keys);
 
             Sdl.Version sversion;
@@ -60,6 +60,11 @@ namespace Microsoft.Xna.Framework
 
             GamePad.InitDatabase();
             Window = _view = new SdlGameWindow(_game);
+        }
+
+        public override GameRunBehavior DefaultRunBehavior
+        {
+            get { return GameRunBehavior.Synchronous; }
         }
 
         public override void BeforeInitialize()
@@ -100,6 +105,28 @@ namespace Microsoft.Xna.Framework
 
         private void SdlRunLoop()
         {
+            uint mouseButtonFlags = 0;
+
+            if (_resetButtonFlags > 0)
+            {
+                if ((_resetButtonFlags & (uint)Sdl.Mouse.Button.Left) > 0)
+                    _view.MouseState.LeftButton = ButtonState.Released;
+
+                if ((_resetButtonFlags & (uint)Sdl.Mouse.Button.Right) > 0)
+                    _view.MouseState.RightButton = ButtonState.Released;
+
+                if ((_resetButtonFlags & (uint)Sdl.Mouse.Button.Middle) > 0)
+                    _view.MouseState.MiddleButton = ButtonState.Released;
+
+                if ((_resetButtonFlags & (uint)Sdl.Mouse.Button.X1Mask) > 0)
+                    _view.MouseState.XButton1 = ButtonState.Released;
+
+                if ((_resetButtonFlags & (uint)Sdl.Mouse.Button.X2Mask) > 0)
+                    _view.MouseState.XButton2 = ButtonState.Released;
+
+                _resetButtonFlags = 0;
+            }
+
             Sdl.Event ev;
 
             while (Sdl.PollEvent(out ev) == 1)
@@ -125,31 +152,89 @@ namespace Microsoft.Xna.Framework
                         break;
                     case Sdl.EventType.MouseWheel:
                         const int wheelDelta = 120;
-                        Mouse.ScrollY += ev.Wheel.Y * wheelDelta;
-                        Mouse.ScrollX += ev.Wheel.X * wheelDelta;
+                        _view.MouseState.ScrollWheelValue += ev.Wheel.Y * wheelDelta;
+                        _view.MouseState.HorizontalScrollWheelValue += ev.Wheel.X * wheelDelta;
                         break;
                     case Sdl.EventType.MouseMotion:
                         Window.MouseState.X = ev.Motion.X;
                         Window.MouseState.Y = ev.Motion.Y;
                         break;
+                    case Sdl.EventType.MouseButtonDown:
+                        mouseButtonFlags |= (uint)ev.Button.Button;
+                        _mouseButtonTimeTracker[ev.Button.Button] = ev.Button.TimeStamp;
+
+                        switch (ev.Button.Button)
+                        {
+                            case Sdl.Mouse.Button.Left:
+                                _view.MouseState.LeftButton = ButtonState.Pressed;
+                                break;
+                            case Sdl.Mouse.Button.Middle:
+                                _view.MouseState.MiddleButton = ButtonState.Pressed;
+                                break;
+                            case Sdl.Mouse.Button.Right:
+                                _view.MouseState.RightButton = ButtonState.Pressed;
+                                break;
+                            case Sdl.Mouse.Button.X1Mask:
+                                _view.MouseState.XButton1 = ButtonState.Pressed;
+                                break;
+                            case Sdl.Mouse.Button.X2Mask:
+                                _view.MouseState.XButton2 = ButtonState.Pressed;
+                                break;
+                        }
+
+                        break;
+                    case Sdl.EventType.MouseButtonUp:
+                        if ((mouseButtonFlags & (uint)ev.Button.Button) > 0)
+                        {
+                            uint timeStamp = 0;
+
+                            if (_mouseButtonTimeTracker.TryGetValue(ev.Button.Button, out timeStamp) &&
+                                ev.Button.TimeStamp >= timeStamp &&
+                                ev.Button.TimeStamp <= timeStamp + MouseButtonMaxTime)
+                            {
+                                _resetButtonFlags |= (uint)ev.Button.Button;
+                                break;
+                            }
+                        }
+
+                        switch (ev.Button.Button)
+                        {
+                            case Sdl.Mouse.Button.Left:
+                                _view.MouseState.LeftButton = ButtonState.Released;
+                                break;
+                            case Sdl.Mouse.Button.Middle:
+                                _view.MouseState.MiddleButton = ButtonState.Released;
+                                break;
+                            case Sdl.Mouse.Button.Right:
+                                _view.MouseState.RightButton = ButtonState.Released;
+                                break;
+                            case Sdl.Mouse.Button.X1Mask:
+                                _view.MouseState.XButton1 = ButtonState.Released;
+                                break;
+                            case Sdl.Mouse.Button.X2Mask:
+                                _view.MouseState.XButton2 = ButtonState.Released;
+                                break;
+                        }
+
+                        break;
                     case Sdl.EventType.KeyDown:
-                    {
-                        var key = KeyboardUtil.ToXna(ev.Key.Keysym.Sym);
-                        if (!_keys.Contains(key))
-                            _keys.Add(key);
-                        char character = (char)ev.Key.Keysym.Sym;
-                        _view.OnKeyDown(new InputKeyEventArgs(key));
-                        if (char.IsControl(character))
-                            _view.OnTextInput(new TextInputEventArgs(character, key));
-                        break;
-                    }
+                        {
+                            var key = KeyboardUtil.ToXna(ev.Key.Keysym.Sym);
+                            if (!_keys.Contains(key))
+                                _keys.Add(key);
+                            char character = (char)ev.Key.Keysym.Sym;
+                            _view.OnKeyDown(new InputKeyEventArgs(key));
+                            if (char.IsControl(character))
+                                _view.OnTextInput(new TextInputEventArgs(character, key));
+                            break;
+                        }
                     case Sdl.EventType.KeyUp:
-                    {
-                        var key = KeyboardUtil.ToXna(ev.Key.Keysym.Sym);
-                        _keys.Remove(key);
-                        _view.OnKeyUp(new InputKeyEventArgs(key));
-                        break;
-                    }
+                        {
+                            var key = KeyboardUtil.ToXna(ev.Key.Keysym.Sym);
+                            _keys.Remove(key);
+                            _view.OnKeyUp(new InputKeyEventArgs(key));
+                            break;
+                        }
                     case Sdl.EventType.TextInput:
                         if (_view.IsTextInputHandled)
                         {
