@@ -11,18 +11,18 @@ namespace Microsoft.Xna.Framework.Media
     /// Represents a video.
     /// </summary>
     public sealed partial class Video : IDisposable
-	{
-		private bool _disposed;
+    {
+        private bool _disposed;
 
-		#region Public API
+        #region Public API
 
-		/// <summary>
-		/// I actually think this is a file PATH...
-		/// </summary>
-		public string FileName { get; private set; }
+        /// <summary>
+        /// I actually think this is a file PATH...
+        /// </summary>
+        public string FileName { get; private set; }
 
-		/// <summary>
-		/// Gets the duration of the Video.
+        /// <summary>
+        /// Gets the duration of the Video.
         /// </summary>
         public TimeSpan Duration { get; internal set; }
 
@@ -60,10 +60,25 @@ namespace Microsoft.Xna.Framework.Media
         {
             FileName = fileName;
 
-#if !WINDOWS_UAP
+#if !WINDOWS_UAP && !DESKTOPGL
             PlatformInitialize();
 #endif
         }
+
+        internal Video(string fileName, float durationMS, int width, int height, float framesPerSecond, VideoSoundtrackType videoSoundtrackType ) :
+            this(fileName, durationMS)
+        {
+            Width = width;
+            Height = height;
+            FramesPerSecond = framesPerSecond;
+            VideoSoundtrackType = videoSoundtrackType;
+
+#if DESKTOPGL && !WINDOWS_UAP
+            PlatformInitialize();
+#endif
+        }
+
+
 
         ~Video()
         {

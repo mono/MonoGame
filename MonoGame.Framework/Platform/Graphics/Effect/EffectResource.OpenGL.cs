@@ -12,5 +12,9 @@ namespace Microsoft.Xna.Framework.Graphics
         const string EnvironmentMapEffectName = "Microsoft.Xna.Framework.Platform.Graphics.Effect.Resources.EnvironmentMapEffect.ogl.mgfxo";
         const string SkinnedEffectName = "Microsoft.Xna.Framework.Platform.Graphics.Effect.Resources.SkinnedEffect.ogl.mgfxo";
         const string SpriteEffectName = "Microsoft.Xna.Framework.Platform.Graphics.Effect.Resources.SpriteEffect.ogl.mgfxo";
+        const string YUVToRGBAEffectName = "Microsoft.Xna.Framework.Platform.Graphics.Effect.Resources.YUVToRGBAEffect.ogl.mgfxo";
+
+        public static readonly EffectResource YUVToRGBAEffect = new EffectResource(YUVToRGBAEffectName);
+
     }
 }

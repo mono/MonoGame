@@ -81,19 +81,21 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
                 switch (key)
                 {
                     case "duration":
-                        _duration = TimeSpan.FromSeconds(double.Parse(value, CultureInfo.InvariantCulture));
+                        double durationSeconds;
+                        if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out durationSeconds))
+                            _duration = TimeSpan.FromSeconds(durationSeconds);
                         break;
 
                     case "bit_rate":
-                        _bitsPerSecond = int.Parse(value, CultureInfo.InvariantCulture);
+                        int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _bitsPerSecond);
                         break;
 
                     case "width":
-                        _width = int.Parse(value, CultureInfo.InvariantCulture);
+                        int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _width);
                         break;
 
                     case "height":
-                        _height = int.Parse(value, CultureInfo.InvariantCulture);
+                        int.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _height);
                         break;
 
                     case "r_frame_rate":

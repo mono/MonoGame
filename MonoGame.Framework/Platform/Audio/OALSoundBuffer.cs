@@ -70,7 +70,31 @@ namespace Microsoft.Xna.Framework.Audio
             Duration = (float)(unpackedSize / ((bits / 8) * channels)) / (float)sampleRate;
         }
 
-		public void Dispose()
+        public unsafe void BindDataBuffer(IntPtr dataBuffer, ALFormat format, int size, int sampleRate)
+        {
+            if ((format == ALFormat.MonoMSAdpcm || format == ALFormat.StereoMSAdpcm) && !OpenALSoundController.Instance.SupportsAdpcm)
+                throw new InvalidOperationException("MS-ADPCM is not supported by this OpenAL driver");
+            if ((format == ALFormat.MonoIma4 || format == ALFormat.StereoIma4) && !OpenALSoundController.Instance.SupportsIma4)
+                throw new InvalidOperationException("IMA/ADPCM is not supported by this OpenAL driver");
+
+            openALFormat = format;
+            int unpackedSize = 0;
+
+            AL.alBufferData((uint)openALDataBuffer, (int)openALFormat, dataBuffer, size, sampleRate);
+            ALHelper.CheckError("Failed to fill buffer.");
+
+            int bits, channels;
+            Duration = -1;
+            AL.GetBuffer(openALDataBuffer, ALGetBufferi.Bits, out bits);
+            ALHelper.CheckError("Failed to get buffer bits");
+            AL.GetBuffer(openALDataBuffer, ALGetBufferi.Channels, out channels);
+            ALHelper.CheckError("Failed to get buffer channels");
+            AL.GetBuffer(openALDataBuffer, ALGetBufferi.Size, out unpackedSize);
+            ALHelper.CheckError("Failed to get buffer size");
+            Duration = (float)(unpackedSize / ((bits / 8) * channels)) / (float)sampleRate;
+        }
+
+        public void Dispose()
 		{
             Dispose(true);
             GC.SuppressFinalize(this);

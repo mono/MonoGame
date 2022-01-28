@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
@@ -36,14 +36,14 @@
 
   <ItemGroup>
     <Compile Remove="Graphics\GraphicsAdapter.cs" />
-    <Compile Remove="Media\Video.cs" />
-    <Compile Remove="Media\VideoPlayer.cs" />
-    <Compile Remove="Content\ContentReaders\VideoReader.cs" />
     <Compile Remove="Input\MessageBox.cs" />
     <Compile Remove="Input\KeyboardInput.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Platform\Media\Theorafile.cs" />
+    <Compile Include="Platform\Media\Video.DesktopGL.cs" />
+    <Compile Include="Platform\Media\VideoPlayer.DesktopGL.cs" />
     <Compile Include="Platform\TitleContainer.Desktop.cs" />
     <Compile Include="Platform\Audio\OggStream.cs" />
     <Compile Include="Platform\Audio\Xact\WaveBank.Default.cs" />
@@ -113,7 +113,11 @@
       <PackagePath>runtimes\win-x64\native</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
+    <Content Include="..\ThirdParty\Dependencies\Theorafile\x64\libtheorafile.dll">
+      <Link>x64\libtheorafile.dll</Link>
+      <PackagePath>runtimes\win-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\ThirdParty\Dependencies\openal-soft\Linux\x64\libopenal.so.1">
       <Link>x64\libopenal.so.1</Link>
       <PackagePath>runtimes\linux-x64\native</PackagePath>
@@ -124,7 +128,11 @@
       <PackagePath>runtimes\linux-x64\native</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
+    <Content Include="..\ThirdParty\Dependencies\Theorafile\x64\libtheorafile.so">
+      <Link>x64\libtheorafile.so</Link>
+      <PackagePath>runtimes\linux-x64\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\ThirdParty\Dependencies\openal-soft\MacOS\Universal\libopenal.1.dylib">
       <Link>libopenal.1.dylib</Link>
       <PackagePath>runtimes\osx\native</PackagePath>
@@ -135,8 +143,16 @@
       <PackagePath>runtimes\osx\native</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
+    <Content Include="..\ThirdParty\Dependencies\Theorafile\x64\libtheorafile.dylib">
+      <Link>libtheorafile.dylib</Link>
+      <PackagePath>runtimes\osx\native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="MonoGame.Framework.DesktopGL.targets" PackagePath="build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Platform\Graphics\Effect\Resources\YUVToRGBAEffect.ogl.mgfxo" />
   </ItemGroup>
 
   <Import Project="Platform\OpenGL.targets" />

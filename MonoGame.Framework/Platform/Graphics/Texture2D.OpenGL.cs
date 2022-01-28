@@ -82,6 +82,19 @@ namespace Microsoft.Xna.Framework.Graphics
                 }
             });
         }
+		
+        internal void SetDataFromPointer(IntPtr ptr)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, glTexture);
+            GraphicsExtensions.CheckGLError();
+
+            GL.PixelStore(PixelStoreParameter.UnpackAlignment, Math.Min(_format.GetSize(), 8));
+
+            System.Diagnostics.Debug.Assert(glFormat != (PixelFormat)GLPixelFormat.CompressedTextureFormats, "SetDataFromPointer should only be called for uncompressed formats!");
+
+            GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, glFormat, glType, ptr);
+            GraphicsExtensions.CheckGLError();
+        }
 
         private void PlatformSetDataBody<T>(int level, T[] data, int startIndex, int elementCount)
             where T : struct
