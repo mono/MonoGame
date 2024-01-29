@@ -24,7 +24,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <summary>Enables or Disables whether the SoundEffectInstance should repeat after playback.</summary>
         /// <remarks>This value has no effect on an already playing sound.</remarks>
         public virtual bool IsLooped
-        { 
+        {
             get { return PlatformGetIsLooped(); }
             set { PlatformSetIsLooped(value); }
         }
@@ -33,7 +33,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// <value>Pan value ranging from -1.0 (left speaker) to 0.0 (centered), 1.0 (right speaker). Values outside of this range will throw an exception.</value>
         public float Pan
         {
-            get { return _pan; } 
+            get { return _pan; }
             set
             {
                 if (value < -1.0f || value > 1.0f)
@@ -45,17 +45,21 @@ namespace Microsoft.Xna.Framework.Audio
         }
 
         /// <summary>Gets or sets the pitch adjustment.</summary>
-        /// <value>Pitch adjustment, ranging from -1.0 (down an octave) to 0.0 (no change) to 1.0 (up an octave). Values outside of this range will throw an Exception.</value>
+        /// <value>Pitch adjustment, where -1.0 is down an octave, 0.0 is no change, and 1.0 is up an octave.</value>
+        /// <remarks>
+        /// Some platforms will clamp this value while others will not. Android and iOS will be clamp this to [-1.0, 1.0]. DesktopGL and WindowsDX will clamp this to [-10.0, 10.0]
+        /// </remarks>
         public float Pitch
         {
             get { return _pitch; }
             set
             {
-                // XAct sounds effects don't have pitch limits
-                if (!_isXAct && (value < -1.0f || value > 1.0f))
-                    throw new ArgumentOutOfRangeException();
-
                 _pitch = value;
+                #if IOS || ANDROID
+                value = Math.Clamp(value, -1, 1);
+                #endif
+
+                value = Math.Clamp(value, -10, 10);
                 PlatformSetPitch(value);
             }
         }
@@ -94,7 +98,7 @@ namespace Microsoft.Xna.Framework.Audio
         {
             _pan = 0.0f;
             _volume = 1.0f;
-            _pitch = 0.0f;            
+            _pitch = 0.0f;
         }
 
         internal SoundEffectInstance(byte[] buffer, int sampleRate, int channels)
@@ -159,7 +163,7 @@ namespace Microsoft.Xna.Framework.Audio
                 if (!SoundEffectInstancePool.SoundsAvailable)
                     throw new InstancePlayLimitException();
             }
-            
+
             // For non-XAct sounds we need to be sure the latest
             // master volume level is applied before playback.
             if (!_isXAct)
