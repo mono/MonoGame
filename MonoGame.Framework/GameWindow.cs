@@ -270,12 +270,35 @@ namespace Microsoft.Xna.Framework
 		protected abstract void SetTitle (string title);
 
 #if DIRECTX && WINDOWS
-        public static GameWindow Create(Game game, int width, int height)
+    
+        /// <summary>
+        /// Create an additional window. Only available in WindowsDX.
+        /// </summary>
+        /// <param name="game">a reference to the game class.</param>
+        /// <param name="width">The width of the new window.</param>
+        /// <param name="height">The height of the new window.</param>
+        /// <param name="show">Display the window imediately. Optional<see cref="Show"/></param>
+        /// <remarks> The visibility default follows the upstream defaults. </remarks>
+        public static GameWindow Create(Game game, int width, int height, bool? show = null)
         {
             var window = new MonoGame.Framework.WinFormsGameWindow((MonoGame.Framework.WinFormsGamePlatform)game.Platform);
             window.Initialize(width, height);
+            if(show.HasValue)
+                window.Form.Visible = show.Value;
 
             return window;
+        }
+        
+        /// <summary>
+        /// Make a new window visible. Only available in WindowsDX.
+        /// </summary>
+        public void Show()
+        {
+            // sanity check for cast
+            if (this is MonoGame.Framework.WinFormsGameWindow)
+            {
+                ((MonoGame.Framework.WinFormsGameWindow)this).Form.Visible = true;
+            }
         }
 #endif
     }
