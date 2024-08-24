@@ -30,17 +30,18 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 				glyph.Subrect.X++;
 				glyph.Subrect.Width--;
 
-				glyph.XOffset++;
-			}
+                glyph.CharacterWidths.A++;
+                glyph.CharacterWidths.B--;
+            }
 
 			// Crop the right.
 			while ((glyph.Subrect.Width > 1) && BitmapUtils.IsAlphaEntirely(0, glyph.Bitmap, new Rectangle(glyph.Subrect.Right - 1, glyph.Subrect.Y, 1, glyph.Subrect.Height)))
 			{
 				glyph.Subrect.Width--;
 
-				glyph.XAdvance++;
+                glyph.CharacterWidths.B--;
+                glyph.CharacterWidths.C++;
 			}
 		}
 	}
-
 }

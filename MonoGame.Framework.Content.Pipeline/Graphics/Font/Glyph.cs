@@ -6,11 +6,24 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct ABCFloat
+    /// <summary>
+    /// Horizontal layout values for glyph bitmap
+    /// </summary>
+    internal struct ABCFloat
     {
+        /// <summary>
+        /// Horizontal space to start of glyph bitmap
+        /// </summary>
         public float A;
+
+        /// <summary>
+        /// Width of glyph bitmap
+        /// </summary>
         public float B;
+
+        /// <summary>
+        /// Horizontal space after glyph bitmap
+        /// </summary>
         public float C;
     }
 
