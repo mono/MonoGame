@@ -14,6 +14,11 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
     public enum FontDescriptionStyle
     {
         /// <summary>
+        /// Normal text.
+        /// </summary>
+        Regular = 0,
+
+        /// <summary>
         /// Bold text.
         /// </summary>
         Bold,
@@ -22,10 +27,5 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
         /// Italic text.
         /// </summary>
         Italic,
-
-        /// <summary>
-        /// Normal text.
-        /// </summary>
-        Regular,
     }
 }

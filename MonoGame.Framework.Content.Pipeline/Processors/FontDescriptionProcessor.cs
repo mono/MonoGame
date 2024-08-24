@@ -190,11 +190,20 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 
             importer = new SharpFontImporter();
 
-            // Import the source font data.
-            importer.Import(options, fontName);
-
+			// Import the source font data.
+			importer.Import(options, fontName);
+            context.Logger.Indent();
+            if (importer.Emboldened)
+            {
+                context.Logger.LogMessage("Bold effect simulated");
+            }
+            if (importer.Italiced)
+            {
+                context.Logger.LogMessage("Italic effect simulated");
+            }
+            context.Logger.Unindent();
             lineSpacing = importer.LineSpacing;
-            yOffsetMin = importer.YOffsetMin;
+			yOffsetMin = importer.YOffsetMin;
 
             // Get all glyphs
             var glyphs = new List<Glyph>(importer.Glyphs);
