@@ -111,8 +111,6 @@ namespace Microsoft.Xna.Framework
         /// </returns>
         public ContainmentType Contains(BoundingFrustum frustum)
         {
-            //TODO: bad done here need a fix. 
-            //Because question is not frustum contain box but reverse and this is not the same
             int i;
             ContainmentType contained;
             Vector3[] corners = frustum.GetCorners();
@@ -132,20 +130,27 @@ namespace Microsoft.Xna.Framework
                 return ContainmentType.Intersects;
 
 
-            // If we get here, it means the first (and only) point we checked was actually contained in the frustum.
-            // So we assume that all other points will also be contained. If one of the points is disjoint, we can
-            // exit immediately saying that the result is Intersects
+            // If we get here it means the first (and only) point we checked was outside the bounding box, so we assume
+            // that all other points will be as well.
+            // If one of the points is contained, we can exit immediately saying that the result is Intersects
             i++;
             for (; i < corners.Length; i++)
             {
                 this.Contains(ref corners[i], out contained);
-                if (contained != ContainmentType.Contains)
+                if (contained == ContainmentType.Contains)
                     return ContainmentType.Intersects;
 
             }
 
-            // If we get here, then we know all the points were actually contained, therefore result is Contains
-            return ContainmentType.Contains;
+            // If we get here, then we know all the points were outside the box. It's possible that the box is actually
+            // contained inside the Fustrum, so we check for that intersection here
+            var thisBox = this;
+            frustum.Contains(ref thisBox, out contained);
+            if (contained != ContainmentType.Disjoint)
+                return ContainmentType.Intersects;
+
+            //If the box is not inside the Fustrum, and the Fustrum is fully outside the box, they are definitely Disjoint
+            return ContainmentType.Disjoint;
         }
 
         /// <summary>
