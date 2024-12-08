@@ -61,8 +61,12 @@ namespace Microsoft.Xna.Framework.Graphics
             PlatformClear();
         }
 
-        private void SetData(int offset, int rows, int columns, object data)
+        private void SetData(int offset, int rows, int columns, object data, ulong stateKey)
         {
+            if (stateKey < _stateKey)
+                return;
+            _dirty = true;
+
             // Shader registers are always 4 bytes and all the
             // incoming data objects should be 4 bytes per element.
             const int elementSize = 4;
@@ -125,12 +129,12 @@ namespace Microsoft.Xna.Framework.Graphics
                         if (param.ParameterClass == EffectParameterClass.Matrix)
                         {
                             rowsUsed = param.ColumnCount;
-                            SetData(offset, param.ColumnCount, param.RowCount, param.Data);
+                            SetData(offset, param.ColumnCount, param.RowCount, param.Data, param.StateKey);
                         }
                         else
                         {
                             rowsUsed = param.RowCount;
-                            SetData(offset, param.RowCount, param.ColumnCount, param.Data);
+                            SetData(offset, param.RowCount, param.ColumnCount, param.Data, param.StateKey);
                         }
                         break;
                     default:
@@ -161,13 +165,7 @@ namespace Microsoft.Xna.Framework.Graphics
             {
                 var index = _parameters[p];
                 var param = parameters[index];
-
-                if (param.StateKey < _stateKey)
-                    continue;
-
                 var offset = _offsets[p];
-                _dirty = true;
-
                 SetParameter(offset, param);
             }
 
