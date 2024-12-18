@@ -24,6 +24,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             _fixedSize = fixedSize;
         }
 
+        /// <inheritdoc/>
         protected override void ClearItems()
         {
             if (_fixedSize)
@@ -32,6 +33,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             base.ClearItems();
         }
 
+        /// <inheritdoc/>
         protected override void RemoveItem(int index)
         {
             if (_fixedSize)
@@ -40,6 +42,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             base.RemoveItem(index);
         }
 
+        /// <inheritdoc/>
         protected override void InsertItem(int index, MipmapChain item)
         {
             if (_fixedSize)

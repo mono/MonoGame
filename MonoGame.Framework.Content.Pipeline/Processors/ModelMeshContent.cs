@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 {
+    /// <summary>
+    /// Provides methods and properties for loading model mesh data.
+    /// </summary>
     public sealed class ModelMeshContent
     {
         private BoundingSphere _boundingSphere;
@@ -27,31 +30,49 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
             _meshParts = new ModelMeshPartContentCollection(meshParts);
         }
 
+        /// <summary>
+        /// Gets the bounding sphere of the mesh.
+        /// </summary>
         public BoundingSphere BoundingSphere
         {
             get { return _boundingSphere; }
         }
 
+        /// <summary>
+        /// Gets the collection of mesh parts contained in this mesh.
+        /// </summary>
         public ModelMeshPartContentCollection MeshParts
         {
             get { return _meshParts; }
         }
 
+        /// <summary>
+        /// Gets the name of the mesh.
+        /// </summary>
         public string Name
         {
             get { return _name; }
         }
 
+        /// <summary>
+        /// Gets the parent bone model.
+        /// </summary>
         public ModelBoneContent ParentBone
         {
             get { return _parentBone; }
         }
 
+        /// <summary>
+        /// Gets the source mesh.
+        /// </summary>
         public MeshContent SourceMesh
         {
             get { return _sourceMesh; }
         }
 
+        /// <summary>
+        /// Gets or sets the tag associated with the mesh.
+        /// </summary>
         public object Tag { get; set; }
     }
 }

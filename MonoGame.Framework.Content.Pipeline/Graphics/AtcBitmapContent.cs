@@ -9,30 +9,44 @@ using Microsoft.Xna.Framework.Content.Pipeline.Utilities;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Provides properties and methods for creating and maintaining an ATC compressed bitmap resource.
+    /// </summary>
     public abstract class AtcBitmapContent : BitmapContent
     {
         internal byte[] _bitmapData;
 
+        /// <summary>
+        /// Initializes a new instance of AtcBitmapContent.
+        /// </summary>
         public AtcBitmapContent()
             : base()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of AtcBitmapContent with the specified width or height.
+        /// </summary>
+        /// <param name="width">Width, in pixels, of the bitmap resource.</param>
+        /// <param name="height">Height, in pixels, of the bitmap resource.</param>
         public AtcBitmapContent(int width, int height)
             : base(width, height)
         {
         }
 
+        /// <inheritdoc/>
         public override byte[] GetPixelData()
         {
             return _bitmapData;
         }
 
+        /// <inheritdoc/>
         public override void SetPixelData(byte[] sourceData)
         {
             _bitmapData = sourceData;
         }
 
+        /// <inheritdoc/>
 		protected override bool TryCopyFrom(BitmapContent sourceBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat sourceFormat;
@@ -89,6 +103,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 			return true;
         }
 
+        /// <inheritdoc/>
         protected override bool TryCopyTo(BitmapContent destinationBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat destinationFormat;
@@ -105,7 +120,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
                 return true;
             }
 
-            // No other support for copying from a ATC texture yet
+            // No other support for copying from an ATC texture yet
             return false;
         }
     }

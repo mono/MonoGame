@@ -6,6 +6,12 @@ using System;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline
 {
+    /// <summary>
+    /// Provides an opaque data dictionary for use in the Content Pipeline.
+    /// </summary>
+    /// <remarks>
+    /// This is equivilant to a <see cref="NamedValueDictionary{T}">NamedValueDictionary</see> where the type of the values is Object.
+    /// </remarks>
     [ContentSerializerCollectionItemName("Data")]
     public sealed class OpaqueDataDictionary : NamedValueDictionary<Object>
     {

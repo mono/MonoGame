@@ -14,11 +14,20 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace MonoGame.Framework.Content.Pipeline.Builder
 {
+    /// <summary>
+    /// Class to provide methods and properties for handling pipeline build events.
+    /// </summary>
     public class PipelineBuildEvent
     {
         private static readonly OpaqueDataDictionary EmptyParameters = new OpaqueDataDictionary();
+        /// <summary>
+        /// Gets the extension of the file to use in this pipeline event
+        /// </summary>
         public static readonly string Extension = ".mgcontent";
 
+        /// <summary>
+        /// Creates a new pipeline build event.
+        /// </summary>
         public PipelineBuildEvent()
         {
             SourceFile = string.Empty;
@@ -52,6 +61,9 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public DateTime DestTime { get; set; }
 
+        /// <summary>
+        /// The name of the DLL containing the importer.
+        /// </summary>
         public string Importer { get; set; }
 
         /// <summary>
@@ -59,6 +71,9 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public DateTime ImporterTime { get; set; }
 
+        /// <summary>
+        /// The name of the DLL containing the processor.
+        /// </summary>
         public string Processor { get; set; }
 
         /// <summary>
@@ -66,15 +81,30 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public DateTime ProcessorTime { get; set; }
 
+        /// <summary>
+        /// Gets or sets the parameters as an opaque dictionary.
+        /// </summary>
         [XmlIgnore]
         public OpaqueDataDictionary Parameters { get; set; }
 
+        /// <summary>
+        /// Class that represents a key / value pair.
+        /// </summary>
         public class Pair
         {
+            /// <summary>
+            /// Name of the key..
+            /// </summary>
             public string Key { get; set; }
+            /// <summary>
+            /// Value related to the key.
+            /// </summary>
             public string Value { get; set; }
         }
 
+        /// <summary>
+        /// Gets or sets the list of parameters.
+        /// </summary>
         [XmlElement("Parameters")]
         public List<Pair> ParametersXml { get; set; }
 
@@ -116,6 +146,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </remarks>
         public List<string> BuildOutput { get; set; }
 
+        /// <summary>
+        /// Creates a pipeline build event from a file.
+        /// </summary>
+        /// <param name="filePath">Path of the file to process.</param>
+        /// <returns>PipelineBuildEvent instance.</returns>
         public static PipelineBuildEvent Load(string filePath)
         {
             var fullFilePath = Path.GetFullPath(filePath);
@@ -139,6 +174,10 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return pipelineEvent;
         }
 
+        /// <summary>
+        /// Saves the build event to a file as serialized Xml.
+        /// </summary>
+        /// <param name="filePath">Full path to save the file.</param>
         public void Save(string filePath)
         {
             var fullFilePath = Path.GetFullPath(filePath);
@@ -156,6 +195,12 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                 serializer.Serialize(textWriter, this);
         }
 
+        /// <summary>
+        /// Checks if the current content files need to be rebuilt.
+        /// </summary>
+        /// <param name="manager">Pipeline manager.</param>
+        /// <param name="cachedEvent">Cached build event.</param>
+        /// <returns><c>true</c> if the content needs to be rebuilt; otherwise <c>false</c>.</returns>
         public bool NeedsRebuild(PipelineManager manager, PipelineBuildEvent cachedEvent)
         {
             // If we have no previously cached build event then we cannot

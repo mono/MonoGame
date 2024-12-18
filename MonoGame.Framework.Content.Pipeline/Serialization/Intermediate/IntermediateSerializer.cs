@@ -20,7 +20,9 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
     // http://blogs.msdn.com/b/shawnhar/archive/2008/08/27/why-intermediateserializer-control-attributes-are-not-part-of-the-content-pipeline.aspx
     //
 
-    
+    /// <summary>
+    /// Provides methods for reading and writing XNA intermediate XML format.
+    /// </summary>
     public class IntermediateSerializer
     {
         /// <summary>
@@ -74,6 +76,15 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
 
         private readonly List<object> _scannedObjects;
 
+        /// <summary>
+        /// Deserializes an object using the IntermediateSerializer and IntermediateReader.
+        /// </summary>
+        /// <param name="input">The XmlReader to read from.</param>
+        /// <param name="referenceRelocationPath">The path to relocate any relative references to.</param>
+        /// <typeparam name="T">The type of object to deserialize.</typeparam>
+        /// <returns>The deserialized object of type T.</returns>
+        /// <exception cref="InvalidContentException">Thrown if no content is found.</exception>
+        /// <exception cref="XmlException">Thrown if an error occurs parsing the XML.</exception>
         public static T Deserialize<T>(XmlReader input, string referenceRelocationPath)
         {
             var serializer = new IntermediateSerializer();
@@ -112,6 +123,13 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
             return asset;
         }
 
+        /// <summary>
+        /// Retrieves the serializer for the specified type.
+        /// </summary>
+        /// <param name="type">The type for which to retrieve the serializer.</param>
+        /// <returns>The serializer for the specified type.</returns>
+        /// <exception cref="RankException">Thrown if the type is not a single dimensional array.</exception>
+        /// <exception cref="NotImplementedException">Thrown if there is no implementation for the type.</exception>
         public ContentTypeSerializer GetTypeSerializer(Type type)
         {
             // Create the known serializers if we haven't already.
@@ -173,14 +191,14 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
                 if (type.IsPrimitive)
                     throw new NotImplementedException(string.Format("Unhandled primitive type `{0}`!", type.FullName));
 
-                // We still don't have a serializer then we 
+                // We still don't have a serializer then we
                 // fallback to the reflection based serializer.
                 serializer = new ReflectiveSerializer(type);
             }
 
             Debug.Assert(serializer.TargetType == type, "Target type mismatch!");
 
-            // We cache the serializer before we initialize it to 
+            // We cache the serializer before we initialize it to
             // avoid a stack overflow on recursive types.
             _serializers.Add(type, serializer);
             serializer.Initialize(this);
@@ -202,6 +220,13 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
             return result;
         }
 
+        /// <summary>
+        /// Serializes the given value of type T to an XML writer.
+        /// </summary>
+        /// <typeparam name="T">The type of the value to serialize.</typeparam>
+        /// <param name="output">The XML writer to write the serialized value to.</param>
+        /// <param name="value">The value to serialize.</param>
+        /// <param name="referenceRelocationPath">The path to relocate any relative references to.</param>
         public static void Serialize<T>(XmlWriter output, T value, string referenceRelocationPath)
         {
             var serializer = new IntermediateSerializer();

@@ -13,6 +13,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
     [ContentImporter(".fbx", DisplayName = "Fbx Importer - MonoGame", DefaultProcessor = "ModelProcessor")]
     public class FbxImporter : ContentImporter<NodeContent>
     {
+        /// <inheritdoc/>
         public override NodeContent Import(string filename, ContentImporterContext context)
         {
             if (filename == null)

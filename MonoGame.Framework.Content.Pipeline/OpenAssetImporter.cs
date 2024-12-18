@@ -15,6 +15,9 @@ using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline
 {
+    /// <summary>
+    /// Implementation of the content importer for common open 3D asset formats
+    /// </summary>
     [ContentImporter(
         ".dae", // Collada
         ".gltf", "glb", // glTF
@@ -43,7 +46,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         ".pk3", // Quake III Map/BSP
         ".mdc", // Return to Castle Wolfenstein
         ".md5", // Doom 3
-        ".smd", ".vta", // Valve Model 
+        ".smd", ".vta", // Valve Model
         ".ogex", // Open Game Engine Exchange
         ".3d", // Unreal
         ".b3d", // BlitzBasic 3D
@@ -66,9 +69,9 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         // Bones are represented by regular nodes, but there is no flag indicating whether
         // a node is a bone. A mesh in Assimp references deformation bones (= bones that
         // affect vertices) by name. That means, we can identify the nodes that represent
-        // deformation bones. But there is no way to identify helper bones (= bones that 
-        // belong to the skeleton, but do not affect vertices). As described in 
-        // http://assimp.sourceforge.net/lib_html/data.html and 
+        // deformation bones. But there is no way to identify helper bones (= bones that
+        // belong to the skeleton, but do not affect vertices). As described in
+        // http://assimp.sourceforge.net/lib_html/data.html and
         // http://gamedev.stackexchange.com/questions/26382/i-cant-figure-out-how-to-animate-my-loaded-model-with-assimp/26442#26442
         // we can only guess which nodes belong to a skeleton:
         // --> Limitation #3: The skeleton needs to be a direct child of the root node or
@@ -129,7 +132,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         ///   <i>OriginalName</i>_$AssimpFbx$_<i>TransformName</i>
         /// </para>
         /// <para>
-        /// where <i>TransformName</i> is one of: 
+        /// where <i>TransformName</i> is one of:
         /// </para>
         /// <para>
         ///   Translation, RotationOffset, RotationPivot, PreRotation, Rotation, PostRotation,
@@ -236,17 +239,18 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         }
 
         internal OpenAssetImporter(string importerName, bool xnaCompatible)
-        {            
+        {
             _importerName = importerName;
             _xnaCompatible = xnaCompatible;
         }
 
         /// <summary>
         /// This disables some Assimp model loading features so that
-        /// the resulting content is the same as what the XNA FbxImporter 
+        /// the resulting content is the same as what the XNA FbxImporter
         /// </summary>
         public bool XnaComptatible { get; set; }
 
+        /// <inheritdoc/>
         public override NodeContent Import(string filename, ContentImporterContext context)
         {
             if (filename == null)
@@ -298,7 +302,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
                     PostProcessSteps.OptimizeMeshes |
                     PostProcessSteps.Triangulate
 
-                    // Unused: 
+                    // Unused:
                     //PostProcessSteps.CalculateTangentSpace
                     //PostProcessSteps.Debone |
                     //PostProcessSteps.FindInstances |      // No effect + slow?
@@ -325,7 +329,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
                 if (_xnaCompatible)
                     ImportXnaMaterials();
                 else
-                    ImportMaterials();  
+                    ImportMaterials();
 
                 ImportNodes();      // Create _pivots and _rootNode (incl. children).
                 ImportSkeleton();   // Create skeleton (incl. animations) and add to _rootNode.
@@ -354,7 +358,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
             _materials = new List<MaterialContent>();
             foreach (var aiMaterial in _scene.Materials)
             {
-                // TODO: What about AlphaTestMaterialContent, DualTextureMaterialContent, 
+                // TODO: What about AlphaTestMaterialContent, DualTextureMaterialContent,
                 // EffectMaterialContent, EnvironmentMapMaterialContent, and SkinnedMaterialContent?
 
                 var material = new BasicMaterialContent
@@ -389,7 +393,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
 
                 if (aiMaterial.HasShininessStrength)
                     material.SpecularPower = aiMaterial.Shininess;
-                
+
                 _materials.Add(material);
             }
         }
@@ -408,7 +412,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
             }
 
             return texture;
-        }            
+        }
 
         /// <summary>
         /// Returns all the Assimp <see cref="Material"/> features as a <see cref="MaterialContent"/>.
@@ -662,8 +666,8 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
                 if (missingBoneWeights)
                 {
                     _context.Logger.LogWarning(
-                        string.Empty, 
-                        _identity, 
+                        string.Empty,
+                        _identity,
                         "No bone weights found for one or more vertices of skinned mesh '{0}'.",
                         aiMesh.Name);
                 }
@@ -1169,6 +1173,11 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
 
         #region Conversion Helpers
 
+        /// <summary>
+        /// Converts a Matrix4x4 to a Xna Matrix.
+        /// </summary>
+        /// <param name="matrix">Matrix4x4 to convert.</param>
+        /// <returns>Xna matrix.</returns>
         [DebuggerStepThrough]
         public static Matrix ToXna(Matrix4x4 matrix)
         {
@@ -1197,36 +1206,66 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
             return result;
         }
 
+        /// <summary>
+        /// Converts a Vector2D to a Xna Vector2.
+        /// </summary>
+        /// <param name="vector">Vector2D to convert.</param>
+        /// <returns>Xna vector2.</returns>
         [DebuggerStepThrough]
         public static Vector2 ToXna(Vector2D vector)
         {
             return new Vector2(vector.X, vector.Y);
         }
 
+        /// <summary>
+        /// Converts a Vector3D to a Xna Vector3.
+        /// </summary>
+        /// <param name="vector">Vector3D to convert.</param>
+        /// <returns>Xna vector3.</returns>
         [DebuggerStepThrough]
         public static Vector3 ToXna(Vector3D vector)
         {
             return new Vector3(vector.X, vector.Y, vector.Z);
         }
 
+        /// <summary>
+        /// Converts a Quaternion to a Xna Quaternion.
+        /// </summary>
+        /// <param name="quaternion">Quaternion to convert.</param>
+        /// <returns>Xna quaternion.</returns>
         [DebuggerStepThrough]
         public static Quaternion ToXna(Assimp.Quaternion quaternion)
         {
             return new Quaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
         }
 
+        /// <summary>
+        /// Converts a Color4D to a Xna color without alpha.
+        /// </summary>
+        /// <param name="color">Color4D to convert.</param>
+        /// <returns>Xna Vector3.</returns>
         [DebuggerStepThrough]
         public static Vector3 ToXna(Color4D color)
         {
             return new Vector3(color.R, color.G, color.B);
         }
 
+        /// <summary>
+        /// Converts a Vector3D to a Xna vector2 representing a texture coordinate.
+        /// </summary>
+        /// <param name="vector">Vector3D to convert.</param>
+        /// <returns>Xna vector2.</returns>
         [DebuggerStepThrough]
         public static Vector2 ToXnaTexCoord(Vector3D vector)
         {
             return new Vector2(vector.X, vector.Y);
         }
 
+        /// <summary>
+        /// Converts a Color4D to a Xna color with alpha.
+        /// </summary>
+        /// <param name="color">Color4D to convert.</param>
+        /// <returns>Xna Color.</returns>
         [DebuggerStepThrough]
         public static Color ToXnaColor(Color4D color)
         {

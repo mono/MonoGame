@@ -33,12 +33,23 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
     public class LocalizedFontProcessor : ContentProcessor<LocalizedFontDescription,
                                                     SpriteFontContent>
     {
+        /// <summary>
+        /// Gets or Sets the premultiply alpha flag.
+        /// </summary>
         [DefaultValue(true)]
         public virtual bool PremultiplyAlpha { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the target texture output format.
+        /// </summary>
         [DefaultValue(typeof(TextureProcessorOutputFormat), "Compressed")]
         public virtual TextureProcessorOutputFormat TextureFormat { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LocalizedFontProcessor"/> class.
+        /// Sets the <see cref="PremultiplyAlpha"/> property to true and the
+        /// <see cref="TextureFormat"/> property to <see cref="TextureProcessorOutputFormat.Compressed"/>.
+        /// </summary>
         public LocalizedFontProcessor ()
         {
               PremultiplyAlpha = true;

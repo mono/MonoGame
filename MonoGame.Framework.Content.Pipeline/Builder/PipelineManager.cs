@@ -17,6 +17,9 @@ using System.Diagnostics;
 
 namespace MonoGame.Framework.Content.Pipeline.Builder
 {
+    /// <summary>
+    /// Class to provide methods and properties for handling content pipelines.
+    /// </summary>
     public class PipelineManager
     {
         [DebuggerDisplay("ImporterInfo: {type.Name}")]
@@ -54,16 +57,36 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         //   Value = processor parameters
         private readonly Dictionary<string, OpaqueDataDictionary> _processorDefaultValues;
 
+        /// <summary>
+        /// Gets or sets the project directory.
+        /// </summary>
         public string ProjectDirectory { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the output directory.
+        /// </summary>
         public string OutputDirectory { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the intermediate directory.
+        /// </summary>
         public string IntermediateDirectory { get; private set; }
 
+        /// <summary>
+        /// Gets the content stats of the previous build.
+        /// </summary>
         public ContentStatsCollection ContentStats { get; private set; }
 
         private ContentCompiler _compiler;
 
+        /// <summary>
+        /// Gets or sets the content build logger.
+        /// </summary>
         public ContentBuildLogger Logger { get; set; }
 
+        /// <summary>
+        /// Gets the list of assemblies referenced by the content project file.
+        /// </summary>
         public List<string> Assemblies { get; private set; }
 
         /// <summary>
@@ -92,6 +115,12 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
         /// </summary>
         public bool RethrowExceptions { get; set; }
 
+        /// <summary>
+        /// Creates a new instance of PipelineManager.
+        /// </summary>
+        /// <param name="projectDir">Project directory.</param>
+        /// <param name="outputDir">Output directory.</param>
+        /// <param name="intermediateDir">Intermediate directory.</param>
         public PipelineManager(string projectDir, string outputDir, string intermediateDir)
         {
             _pipelineBuildEvents = new Dictionary<string, List<PipelineBuildEvent>>();
@@ -113,6 +142,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             ContentStats.PreviousStats = ContentStatsCollection.Read(intermediateDir);
         }
 
+        /// <summary>
+        /// Assigns a type converter for a type
+        /// </summary>
+        /// <typeparam name="TType">Type to be converted.</typeparam>
+        /// <typeparam name="TTypeConverter">Type converter to be applied to the type.</typeparam>
 	    public void AssignTypeConverter<TType, TTypeConverter> ()
 	    {
 		    TypeDescriptor.AddAttributes (typeof (TType), new TypeConverterAttribute (typeof (TTypeConverter)));
@@ -123,6 +157,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
 		    AssignTypeConverter<Microsoft.Xna.Framework.Color, StringToColorConverter> ();
 	    }
 
+        /// <summary>
+        /// Adds an assembly to be used by the pipeline.
+        /// </summary>
+        /// <param name="assemblyFilePath">Assembly file path.</param>
+        /// <exception cref="ArgumentException">Thrown if the assembly file path is not absolute or null.</exception>
         public void AddAssembly(string assemblyFilePath)
         {
             if (assemblyFilePath == null)
@@ -235,6 +274,10 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             }
         }
 
+        /// <summary>
+        /// Gets the importer types.
+        /// </summary>
+        /// <returns>Array of types.</returns>
         public Type[] GetImporterTypes()
         {
             if (_importers == null)
@@ -250,6 +293,10 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return types.ToArray();
         }
 
+        /// <summary>
+        /// Gets the processor types.
+        /// </summary>
+        /// <returns>Array of types.</returns>
         public Type[] GetProcessorTypes()
         {
             if (_processors == null)
@@ -265,6 +312,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return types.ToArray();
         }
 
+        /// <summary>
+        /// Creates an instance of an importer.
+        /// </summary>
+        /// <param name="name">Name of the importer.</param>
+        /// <returns>Content importer.</returns>
         public IContentImporter CreateImporter(string name)
         {
             if (_importers == null)
@@ -280,6 +332,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return null;
         }
 
+        /// <summary>
+        /// Returns the importer type name based on the file extension.
+        /// </summary>
+        /// <param name="ext">File extension to search for.</param>
+        /// <returns>Importer type name or <c>null</c> if not found.</returns>
         public string FindImporterByExtension(string ext)
         {
             if (_importers == null)
@@ -295,6 +352,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return null;
         }
 
+        /// <summary>
+        /// Gets the importer assembly timestamp.
+        /// </summary>
+        /// <param name="name">Assembly name.</param>
+        /// <returns>Timestamp.</returns>
         public DateTime GetImporterAssemblyTimestamp(string name)
         {
             if (_importers == null)
@@ -310,6 +372,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return DateTime.MaxValue;
         }
 
+        /// <summary>
+        /// Gets the default processor for an importer.
+        /// </summary>
+        /// <param name="importer">Name of the importer.</param>
+        /// <returns>Name of the processor or <c>null</c> if not found.</returns>
         public string FindDefaultProcessor(string importer)
         {
             if (_importers == null)
@@ -325,6 +392,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return null;
         }
 
+        /// <summary>
+        /// Gets the processor type.
+        /// </summary>
+        /// <param name="name">Name of the processor.</param>
+        /// <returns>Type of the processor or <c>null</c> if not found.</returns>
         public Type GetProcessorType(string name)
         {
             if (_processors == null)
@@ -340,6 +412,13 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return null;
         }
 
+        /// <summary>
+        /// Resolves the importer and processor names.
+        /// </summary>
+        /// <param name="sourceFilepath">Path of the source file.</param>
+        /// <param name="importerName">Name of the importer.</param>
+        /// <param name="processorName">Name of the processor.</param>
+        /// <exception cref="Exception">Thrown if a default importer or processor could not be found.</exception>
         public void ResolveImporterAndProcessor(string sourceFilepath, ref string importerName, ref string processorName)
         {
             // Resolve the importer name.
@@ -355,6 +434,12 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
                 throw new Exception(string.Format("Couldn't find a default processor for importer '{0}'!", importerName));
         }
 
+        /// <summary>
+        /// Creates an instance of a processor.
+        /// </summary>
+        /// <param name="name">Name of the processor.</param>
+        /// <param name="processorParameters">Opaque data dictionary containing the processor parameters.</param>
+        /// <returns>Content processor.</returns>
         public IContentProcessor CreateProcessor(string name, OpaqueDataDictionary processorParameters)
         {
             var processorType = GetProcessorType(name);
@@ -430,6 +515,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return defaultValues;
         }
 
+        /// <summary>
+        /// Gets the timestamp of the processor assembly.
+        /// </summary>
+        /// <param name="name">Name of the processor.</param>
+        /// <returns>Timestamp.</returns>
         public DateTime GetProcessorAssemblyTimestamp(string name)
         {
             if (_processors == null)
@@ -445,6 +535,12 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return DateTime.MaxValue;
         }
 
+        /// <summary>
+        /// Validate a list of processor parameters for a given processor type.
+        /// </summary>
+        /// <param name="name">Name of the processor type.</param>
+        /// <param name="processorParameters">Opaque data dictionary containing the processor parameters.</param>
+        /// <returns>Opaque data dictionary containing the validated parameters.</returns>
         public OpaqueDataDictionary ValidateProcessorParameters(string name, OpaqueDataDictionary processorParameters)
         {
             var result = new OpaqueDataDictionary();
@@ -511,6 +607,14 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return PipelineBuildEvent.Load(eventFilepath);
         }
 
+        /// <summary>
+        /// Registers content to be processed by the pipeline manager.
+        /// </summary>
+        /// <param name="sourceFilepath">Source file path.</param>
+        /// <param name="outputFilepath">Output file path.</param>
+        /// <param name="importerName">Name of the importer to use.</param>
+        /// <param name="processorName">Name of the processor to use.</param>
+        /// <param name="processorParameters">Processor parameters.</param>
         public void RegisterContent(string sourceFilepath, string outputFilepath = null, string importerName = null, string processorName = null, OpaqueDataDictionary processorParameters = null)
         {
             sourceFilepath = PathHelper.Normalize(sourceFilepath);
@@ -531,6 +635,15 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             TrackPipelineBuildEvent(contentEvent);
         }
 
+        /// <summary>
+        /// Content builder.
+        /// </summary>
+        /// <param name="sourceFilepath">Source file path.</param>
+        /// <param name="outputFilepath">Output file path.</param>
+        /// <param name="importerName">Name of the importer to use.</param>
+        /// <param name="processorName">Name of the processor to use.</param>
+        /// <param name="processorParameters">Processor parameters.</param>
+        /// <returns>PipelineBuildEvent instance.</returns>
         public PipelineBuildEvent BuildContent(string sourceFilepath, string outputFilepath = null, string importerName = null, string processorName = null, OpaqueDataDictionary processorParameters = null)
         {
             sourceFilepath = PathHelper.Normalize(sourceFilepath);
@@ -645,6 +758,12 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             }
         }
 
+        /// <summary>
+        /// Processes the content from the pipeline event.
+        /// </summary>
+        /// <param name="pipelineEvent">Pipeline event.</param>
+        /// <returns>Object processed by the pipeline.</returns>
+        /// <exception cref="PipelineException">Thrown if there was an error processing the content.</exception>
         public object ProcessContent(PipelineBuildEvent pipelineEvent)
         {
             if (!File.Exists(pipelineEvent.SourceFile))
@@ -744,6 +863,11 @@ namespace MonoGame.Framework.Content.Pipeline.Builder
             return processedObject;
         }
 
+        /// <summary>
+        /// Cleans content from the intermediate folder.
+        /// </summary>
+        /// <param name="sourceFilepath">Path of the source file.</param>
+        /// <param name="outputFilepath">Path of the output file.</param>
         public void CleanContent(string sourceFilepath, string outputFilepath = null)
         {
             // First try to load the event file.

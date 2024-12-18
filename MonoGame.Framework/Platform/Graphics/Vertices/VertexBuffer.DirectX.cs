@@ -37,7 +37,7 @@ namespace Microsoft.Xna.Framework.Graphics
             if (_buffer != null)
                 return;
 
-            // TODO: To use Immutable resources we would need to delay creation of 
+            // TODO: To use Immutable resources we would need to delay creation of
             // the Buffer until SetData() and recreate them if set more than once.
 
             var accessflags = SharpDX.Direct3D11.CpuAccessFlags.None;
@@ -211,7 +211,7 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 
-        /// <summary /
+        /// <summary/>
         protected override void Dispose(bool disposing)
         {
             if (disposing)

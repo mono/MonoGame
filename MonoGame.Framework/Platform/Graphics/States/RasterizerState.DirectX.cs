@@ -11,6 +11,7 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         private SharpDX.Direct3D11.RasterizerState _state;
 
+        /// <inheritdoc />
         protected internal override void GraphicsDeviceResetting()
         {
             SharpDX.Utilities.Dispose(ref _state);
@@ -75,7 +76,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 desc.IsFrontCounterClockwise = false;
                 desc.IsAntialiasedLineEnabled = false;
 
-                // To support feature level 9.1 these must 
+                // To support feature level 9.1 these must
                 // be set to these exact values.
                 desc.DepthBiasClamp = 0.0f;
 

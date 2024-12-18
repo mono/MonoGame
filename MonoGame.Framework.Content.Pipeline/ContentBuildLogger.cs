@@ -17,6 +17,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
         Stack<string> filenames = new Stack<string>();
         private int indentCount = 0;
 
+        /// <summary/>
         protected string IndentString { get { return String.Empty.PadLeft(Math.Max(0, indentCount), '\t'); } }
 
         /// <summary>
@@ -114,11 +115,17 @@ namespace Microsoft.Xna.Framework.Content.Pipeline
             filenames.Push(filename);
         }
 
+        /// <summary>
+        /// Increments the indentation level.
+        /// </summary>
         public void Indent()
         {
             indentCount++;
         }
 
+        /// <summary>
+        /// Decrements the indentation level.
+        /// </summary>
         public void Unindent()
         {
             indentCount--;

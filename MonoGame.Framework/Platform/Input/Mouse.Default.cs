@@ -28,6 +28,13 @@ namespace Microsoft.Xna.Framework.Input
             PrimaryWindow.MouseState.Y = y;
         }
 
+        /// <summary>
+        /// Sets the <see cref="MouseCursor">MouseCursor</see>.
+        /// </summary>
+        /// <remarks>
+        /// This method does not set a custom cursor as it is not currently supported on the IOS platform.
+        /// </remarks>
+        /// <param name="cursor">The <see cref="MouseCursor">MouseCursor</see> for the system to use</param>
         public static void PlatformSetCursor(MouseCursor cursor)
         {
 

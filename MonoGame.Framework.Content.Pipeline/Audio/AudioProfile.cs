@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
 {
+    /// <summary>
+    /// Provides a base class for handling audio profiles.
+    /// </summary>
     public abstract class AudioProfile
     {
         private static readonly LoadedTypeCollection<AudioProfile> _profiles = new LoadedTypeCollection<AudioProfile>();
@@ -51,7 +54,12 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
         /// <returns>The quality used for conversion which could be different from the suggested quality.</returns>
         public abstract ConversionQuality ConvertStreamingAudio(TargetPlatform platform, ConversionQuality quality, AudioContent content, ref string outputFileName);
 
-
+        /// <summary>
+        /// Calculates the sample rate based on the conversion quality and the source sample rate.
+        /// </summary>
+        /// <param name="quality">The target <see cref="ConversionQuality"/></param>
+        /// <param name="sourceSampleRate">The source sample rate.</param>
+        /// <returns>The calculated sample rate.</returns>
         protected static int QualityToSampleRate(ConversionQuality quality, int sourceSampleRate)
         {
             switch (quality)
@@ -65,6 +73,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
             return Math.Max(8000, sourceSampleRate);
         }
 
+        /// <summary/>
         protected static int QualityToBitRate(ConversionQuality quality)
         {
             switch (quality)

@@ -33,11 +33,13 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
         {
         }
 
+        /// <inheritdoc/>
         public override byte[] GetPixelData()
         {
             return _data;
         }
 
+        /// <inheritdoc/>
         public override void SetPixelData(byte[] sourceData)
         {
             int bytesRequired = ((Width + 3) >> 2) * ((Height + 3) >> 2) * SurfaceFormat.RgbEtc1.GetSize();
@@ -50,6 +52,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             Buffer.BlockCopy(sourceData, 0, _data, 0, bytesRequired);
         }
 
+        /// <inheritdoc/>
         protected override bool TryCopyFrom(BitmapContent sourceBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat sourceFormat;
@@ -93,6 +96,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             return true;
         }
 
+        /// <inheritdoc/>
         protected override bool TryCopyTo(BitmapContent destinationBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat destinationFormat;

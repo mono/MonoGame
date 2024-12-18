@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Content.Pipeline;
 
 namespace MonoGame.Framework.Content.Pipeline.Builder
 {
+    /// <summary>
+    /// Methods provided to normalize and manipulate paths.
+    /// </summary>
     public static class PathHelper
     {
         /// <summary>

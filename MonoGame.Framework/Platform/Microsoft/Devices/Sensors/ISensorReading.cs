@@ -6,8 +6,14 @@ using System;
 
 namespace Microsoft.Devices.Sensors
 {
+    /// <summary>
+    /// Common interface used for sensor readings.
+    /// </summary>
 	public interface ISensorReading
 	{
+        /// <summary>
+        /// Timestamp of the sensor reading.
+        /// </summary>
 		DateTimeOffset Timestamp { get; }
 	}
 }

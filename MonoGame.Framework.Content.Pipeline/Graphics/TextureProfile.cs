@@ -9,6 +9,9 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Base class for handling texture profiles.
+    /// </summary>
     public abstract class TextureProfile
     {
         private static readonly LoadedTypeCollection<TextureProfile> _profiles = new LoadedTypeCollection<TextureProfile>();
@@ -77,20 +80,21 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             catch (EntryPointNotFoundException ex)
             {
                 context.Logger.LogImportantMessage("Could not find the entry point to compress the texture. " + ex.ToString());
-                throw ex;
+                throw;
             }
             catch (DllNotFoundException ex)
             {
                 context.Logger.LogImportantMessage("Could not compress texture. Required shared lib is missing. " + ex.ToString());
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {
                 context.Logger.LogImportantMessage("Could not convert texture. " + ex.ToString());
-                throw ex;
+                throw;
             }
         }
 
+        /// <summary/>
         protected abstract void PlatformCompressTexture(ContentProcessorContext context, TextureContent content, TextureProcessorOutputFormat format, bool isSpriteFont);
     }
 }

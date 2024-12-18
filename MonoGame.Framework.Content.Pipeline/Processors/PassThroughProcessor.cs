@@ -15,6 +15,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
     [ContentProcessor(DisplayName = "No Processing Required")]
     public class PassThroughProcessor : ContentProcessor<object, object>
     {
+        /// <inheritdoc/>
         public override object Process(object input, ContentProcessorContext context)
         {
             return input;

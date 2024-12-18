@@ -11,9 +11,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
 {
+    /// <summary>
+    /// Provides methods and properties to write a <see cref="SpriteFontContent"/> to binary format.
+    /// </summary>
     [ContentTypeWriter]
     public class SpriteFontContentWriter : ContentTypeWriter<SpriteFontContent>
     {
+        /// <inheritdoc/>
         protected internal override void Write(ContentWriter output, SpriteFontContent value)
         {
             output.WriteObject(value.Texture);

@@ -9,6 +9,9 @@ using System.Xml;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
 {
+    /// <summary>
+    /// IntermetiateReader is used to read content from the intermediate format.
+    /// </summary>
     public sealed class IntermediateReader
     {
         private readonly string _filePath;
@@ -17,8 +20,14 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
 
         private readonly Dictionary<string, List<Action<Type, string>>> _externalReferences;
 
+        /// <summary>
+        /// Gets the instances XML reader.
+        /// </summary>
         public XmlReader Xml { get; private set; }
 
+        /// <summary>
+        /// Gets the serializer.
+        /// </summary>
         public IntermediateSerializer Serializer { get; private set; }
 
         internal IntermediateReader(IntermediateSerializer serializer, XmlReader xmlReader, string filePath)
@@ -30,23 +39,52 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
             _externalReferences = new Dictionary<string, List<Action<Type, string>>>();
         }
 
+        /// <summary>
+        /// Moves the XML reader to the specified element.
+        /// </summary>
+        /// <param name="elementName">The name of the element to move to.</param>
+        /// <returns><c>true</c> if the element is found, <c>false</c> otherwise.</returns>
         public bool MoveToElement(string elementName)
         {
             var nodeType = Xml.MoveToContent();
-            return  nodeType == XmlNodeType.Element && 
+            return  nodeType == XmlNodeType.Element &&
                     Xml.Name == elementName;
         }
- 
+
+        /// <summary>
+        /// Reads an object from the XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute to use.</param>
+        /// <returns>The deserialized object of type T.</returns>
         public T ReadObject<T>(ContentSerializerAttribute format)
         {
             return ReadObject(format, Serializer.GetTypeSerializer(typeof(T)), default(T));
         }
 
+        /// <summary>
+        /// Reads an object from the XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute to use.</param>
+        /// <param name="typeSerializer">The type serializer to use.</param>
+        /// <returns>The deserialized object of type T.</returns>
         public T ReadObject<T>(ContentSerializerAttribute format, ContentTypeSerializer typeSerializer)
         {
             return ReadObject(format, typeSerializer, default(T));
         }
 
+        /// <summary>
+        /// Reads an object from the XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <param name="typeSerializer">The type serializer for the object.</param>
+        /// <param name="existingInstance">An existing instance of the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        /// <exception cref="InvalidContentException">
+        /// Thrown when the element can not be found, is null or cannot be assigned.
+        /// </exception>
         public T ReadObject<T>(ContentSerializerAttribute format, ContentTypeSerializer typeSerializer, T existingInstance)
         {
             if (!format.FlattenContent)
@@ -78,25 +116,60 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
                     Xml.MoveToElement();
                 }
             }
-            
+
             return ReadRawObject(format, typeSerializer, existingInstance);
         }
 
+
+        /// <summary>
+        /// Reads an object from the XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <param name="existingInstance">An existing instance of the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
         public T ReadObject<T>(ContentSerializerAttribute format, T existingInstance)
         {
-            return ReadObject(format, Serializer.GetTypeSerializer(typeof(T)), existingInstance);            
+            return ReadObject(format, Serializer.GetTypeSerializer(typeof(T)), existingInstance);
         }
 
+        /// <summary>
+        /// Reads a raw object from the XML using the specified format and type serializer.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        /// <exception cref="InvalidContentException">
+        /// Thrown when the element can not be found or is null.
+        /// </exception>
         public T ReadRawObject<T>(ContentSerializerAttribute format)
         {
-            return ReadRawObject(format, Serializer.GetTypeSerializer(typeof(T)), default(T));         
+            return ReadRawObject(format, Serializer.GetTypeSerializer(typeof(T)), default(T));
         }
 
+        /// <summary>
+        /// Reads an object from the XML.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <param name="typeSerializer">The type serializer for the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
         public T ReadRawObject<T>(ContentSerializerAttribute format, ContentTypeSerializer typeSerializer)
         {
-            return ReadRawObject(format, typeSerializer, default(T));         
+            return ReadRawObject(format, typeSerializer, default(T));
         }
 
+        /// <summary>
+        /// Reads a raw object from the XML using the specified format and type serializer.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <param name="typeSerializer">The type serializer for the object.</param>
+        /// <param name="existingInstance">An existing instance of the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        /// <exception cref="InvalidContentException">
+        /// Thrown when the element can not be found or is null.
+        /// </exception>
         public T ReadRawObject<T>(ContentSerializerAttribute format, ContentTypeSerializer typeSerializer, T existingInstance)
         {
             if (format.FlattenContent)
@@ -123,11 +196,30 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
             return (T)result;
         }
 
+        /// <summary>
+        /// Reads a raw object from the XML using the specified format and type serializer.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="format">The format attribute of the object.</param>
+        /// <param name="existingInstance">An existing instance of the object.</param>
+        /// <returns>The deserialized object of type T.</returns>
+        /// <exception cref="InvalidContentException">
+        /// Thrown when the element can not be found or is null.
+        /// </exception>
         public T ReadRawObject<T>(ContentSerializerAttribute format, T existingInstance)
         {
-            return ReadRawObject(format, Serializer.GetTypeSerializer(typeof(T)), existingInstance);           
+            return ReadRawObject(format, Serializer.GetTypeSerializer(typeof(T)), existingInstance);
         }
 
+        /// <summary>
+        /// Reads a shared resource from the XML using the specified format and fixup action.
+        /// </summary>
+        /// <typeparam name="T">The type of the resource.</typeparam>
+        /// <param name="format">The format attribute of the resource.</param>
+        /// <param name="fixup">The fixup action to apply to the resource.</param>
+        /// <exception cref="InvalidContentException">
+        /// Thrown if the element specified by the format attribute is not found.
+        /// </exception>
         public void ReadSharedResource<T>(ContentSerializerAttribute format, Action<T> fixup)
         {
             string str;
@@ -144,7 +236,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
 
             if (string.IsNullOrEmpty(str))
                 return;
-            
+
             // Do we already have one for this?
             Action<object> prevFixup;
             if (!_resourceFixups.TryGetValue(str, out prevFixup))
@@ -187,6 +279,14 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
             }
         }
 
+        /// <summary>
+        /// Reads an external reference of a given type.
+        /// </summary>
+        /// <param name="existingInstance">The existing instance of the ExternalReference.</param>
+        /// <typeparam name="T">The type of the external reference.</typeparam>
+        /// <exception cref="InvalidContentException">
+        /// Thrown if the external reference type is invalid.
+        /// </exception>
         public void ReadExternalReference<T>(ExternalReference<T> existingInstance)
         {
             if (!MoveToElement("Reference"))
@@ -249,7 +349,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Intermediate
         }
 
         /// <summary>
-        /// Reads the next type in the 
+        /// Reads the next type in the
         /// </summary>
         /// <returns></returns>
         public Type ReadTypeName()

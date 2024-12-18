@@ -7,9 +7,13 @@ using System.IO;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 {
+    /// <summary>
+    /// Provides methods and properties for maintaining video content.
+    /// </summary>
     [ContentProcessor(DisplayName = "Video - MonoGame")]
     public class VideoProcessor : ContentProcessor<VideoContent, VideoContent>
     {
+        /// <inheritdoc/>
         public override VideoContent Process(VideoContent input, ContentProcessorContext context)
         {
             var relative = Path.GetDirectoryName(PathHelper.GetRelativePath(context.OutputDirectory, context.OutputFilename));

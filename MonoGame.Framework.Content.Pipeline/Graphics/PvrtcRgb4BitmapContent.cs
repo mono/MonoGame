@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <inheritdoc/>
     public class PvrtcRgb4BitmapContent : PvrtcBitmapContent
     {
         /// <summary>

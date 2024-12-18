@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
 {
+    /// <summary>
+    /// Provides properties and methods for managing model content.
+    /// </summary>
     public sealed class ModelContent
     {
         private ModelBoneContentCollection _bones;
@@ -21,21 +24,33 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
             _meshes = new ModelMeshContentCollection(meshes);
         }
 
+        /// <summary>
+        /// Returns the bone content collection.
+        /// </summary>
         public ModelBoneContentCollection Bones
         {
             get { return _bones; }
         }
 
+        /// <summary>
+        /// Returns the bone mesh collection.
+        /// </summary>
         public ModelMeshContentCollection Meshes
         {
             get { return _meshes; }
         }
 
+        /// <summary>
+        /// Returns the root bone.
+        /// </summary>
         public ModelBoneContent Root
         {
             get { return _root; }
         }
 
+        /// <summary>
+        /// Gets or sets an object that can be used to tag this model content.
+        /// </summary>
         public object Tag { get; set; }
     }
 }

@@ -11,12 +11,20 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Provides properties and methods for creating and maintaining a bitmap resource.
+    /// </summary>
     public class PixelBitmapContent<T> : BitmapContent where T : struct, IEquatable<T>
     {
         internal T[][] _pixelData;
 
         internal SurfaceFormat _format;
 
+        /// <summary>
+        /// Initializes a new instance of PixelBitmapContent with the specified width or height.
+        /// </summary>
+        /// <param name="width">Width, in pixels, of the bitmap resource.</param>
+        /// <param name="height">Height, in pixels, of the bitmap resource.</param>
         public PixelBitmapContent(int width, int height)
         {
             if (!TryGetFormat(out _format))
@@ -31,6 +39,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 
         }
 
+        /// <inheritdoc cref="BitmapContent.GetPixelData"/>
         public override byte[] GetPixelData()
         {
             var formatSize = _format.GetSize();
@@ -50,6 +59,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             return outputData;
         }
 
+        /// <inheritdoc cref="BitmapContent.SetPixelData"/>
         public override void SetPixelData(byte[] sourceData)
         {
             var size = _format.GetSize();
@@ -65,6 +75,12 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             }
         }
 
+        /// <summary>
+        /// Returns pixel data for the given row.
+        /// </summary>
+        /// <param name="y">The row index.</param>
+        /// <returns>Array containing the pixel data for the given row.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Row is outside the bounds of the bitmap.</exception>
         public T[] GetRow(int y)
         {
             if (y < 0 || y >= Height)
@@ -123,16 +139,33 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             return true;
         }
 
+        /// <summary>
+        /// Gets the pixel at the specified location.
+        /// </summary>
+        /// <param name="x">Pixel x coordinate.</param>
+        /// <param name="y">Pixel y coordinate.</param>
+        /// <returns>The pixel for the specified location.</returns>
         public T GetPixel(int x, int y)
         {
             return _pixelData[y][x];
         }
 
+        /// <summary>
+        /// Sets the pixel at the specified location.
+        /// </summary>
+        /// <param name="x">Pixel x coordinate.</param>
+        /// <param name="y">Pixel y coordinate.</param>
+        /// <param name="value">The new pixel value.</param>
         public void SetPixel(int x, int y, T value)
         {
             _pixelData[y][x] = value;
         }
 
+        /// <summary>
+        /// Replaces all pixels of the specified color with the new color.
+        /// </summary>
+        /// <param name="originalColor">The color to replace.</param>
+        /// <param name="newColor">The color to replace it with.</param>
         public void ReplaceColor(T originalColor, T newColor)
         {
             for (var y = 0; y < Height; y++)
@@ -145,6 +178,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             }
         }
 
+        /// <inheritdoc cref="BitmapContent.TryCopyFrom"/>
         protected override bool TryCopyFrom(BitmapContent sourceBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat sourceFormat;
@@ -209,6 +243,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             return true;
         }
 
+        /// <inheritdoc cref="BitmapContent.TryCopyTo"/>
         protected override bool TryCopyTo(BitmapContent destinationBitmap, Rectangle sourceRegion, Rectangle destinationRegion)
         {
             SurfaceFormat destinationFormat;

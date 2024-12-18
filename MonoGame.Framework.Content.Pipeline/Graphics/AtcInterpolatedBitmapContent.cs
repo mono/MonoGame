@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Provides properties and methods for creating and maintaining an ATC interpolated compressed bitmap resource.
+    /// </summary>
     public class AtcInterpolatedBitmapContent : AtcBitmapContent
     {
         /// <summary>

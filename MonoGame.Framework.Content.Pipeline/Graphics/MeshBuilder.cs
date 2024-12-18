@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Provides methods for building a mesh for use in the Content Pipeline.
+    /// </summary>
     public sealed class MeshBuilder
     {
         private readonly MeshContent _meshContent;
@@ -105,6 +108,13 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
             _currentGeometryContent.Indices.Add(pos);
         }
 
+        /// <summary>
+        /// Creates a new vertex channel with the specified usage and adds it to the mesh builder.
+        /// </summary>
+        /// <typeparam name="T">The type of data to be stored in the vertex channel.</typeparam>
+        /// <param name="usage">The usage of the vertex channel.</param>
+        /// <returns>The new count of vertex channels.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the mesh builder has already been finished.</exception>
         public int CreateVertexChannel<T>(string usage)
         {
             if (_finishedMesh)

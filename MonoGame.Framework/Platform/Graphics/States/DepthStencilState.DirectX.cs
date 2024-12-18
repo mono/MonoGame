@@ -11,6 +11,7 @@ namespace Microsoft.Xna.Framework.Graphics
     {
         private SharpDX.Direct3D11.DepthStencilState _state;
 
+        /// <inheritdoc />
         protected internal override void GraphicsDeviceResetting()
         {
             SharpDX.Utilities.Dispose(ref _state);
@@ -44,7 +45,7 @@ namespace Microsoft.Xna.Framework.Graphics
                     desc.BackFace.PassOperation = GetStencilOp(CounterClockwiseStencilPass);
                 }
                 else
-                {   //use same settings as frontFace 
+                {   //use same settings as frontFace
                     desc.BackFace.Comparison = StencilFunction.ToComparison();
                     desc.BackFace.DepthFailOperation = GetStencilOp(StencilDepthBufferFail);
                     desc.BackFace.FailOperation = GetStencilOp(StencilFail);

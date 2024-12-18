@@ -9,7 +9,7 @@ using System.IO;
 namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
 {
     /// <summary>
-    /// Encapsulates and provides operations, such as format conversions, on the 
+    /// Encapsulates and provides operations, such as format conversions, on the
     /// source audio. This type is produced by the audio importers and used by audio
     /// processors to produce compiled audio assets.
     /// </summary>
@@ -43,11 +43,11 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
         /// This changes from the source data to the output data after conversion.
         /// For MP3 and WMA files this throws an exception to match XNA behavior.
         /// </remarks>
-        public ReadOnlyCollection<byte> Data 
+        public ReadOnlyCollection<byte> Data
         {
             get
             {
-                if (_disposed || _data == null)                
+                if (_disposed || _data == null)
                     throw new InvalidContentException("Could not read the audio data from file \"" + Path.GetFileName(_fileName) + "\".");
                 return _data;
             }
@@ -85,7 +85,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
             get
             {
                 return _loopLength;
-            } 
+            }
         }
 
         /// <summary>
@@ -179,6 +179,15 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
             DefaultAudioProfile.ConvertToFormat(this, formatType, quality, saveToFile);
         }
 
+        /// <summary>
+        /// Sets the data and properties for the audio content.
+        /// </summary>
+        /// <param name="data">The audio data to be set.</param>
+        /// <param name="format">The audio format.</param>
+        /// <param name="duration">The duration of the audio.</param>
+        /// <param name="loopStart">The start position of the loop.</param>
+        /// <param name="loopLength">The length of the loop.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the data or format is null.</exception>
         public void SetData(byte[] data, AudioFormat format, TimeSpan duration, int loopStart, int loopLength)
         {
             if (data == null)
@@ -193,6 +202,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Audio
             _loopLength = loopLength;
         }
 
+        /// <inheritdoc cref="IDisposable.Dispose()"/>
         public void Dispose()
         {
             _disposed = true;

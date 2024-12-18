@@ -7,6 +7,9 @@ using Foundation;
 
 namespace Microsoft.Devices.Sensors
 {
+    /// <summary>
+    /// Provides methods to access accelerometer data from the device
+    /// </summary>
 	public sealed class Accelerometer : SensorBase<AccelerometerReading>
 	{
         static readonly int MaxSensorCount = 10;
@@ -14,10 +17,19 @@ namespace Microsoft.Devices.Sensors
 		private static bool started = false;
 		private static SensorState state = IsSupported ? SensorState.Initializing : SensorState.NotSupported;
 
+        /// <summary>
+        /// Check if an accelerometer is supported on the current device
+        /// </summary>
+        /// <returns>true if an accelerometer is supported</returns>
 		public static bool IsSupported
 		{
 			get { return motionManager.AccelerometerAvailable; }
 		}
+
+        /// <summary>
+        /// Check the current state of the accelerometer
+        /// </summary>
+        /// <returns>Returns current <see cref="SensorState">SensorState</see></returns>
 		public SensorState State
 		{
 			get { return state; }
@@ -25,6 +37,11 @@ namespace Microsoft.Devices.Sensors
 
 		private static event CMAccelerometerHandler readingChanged;
 
+        /// <summary>
+        /// Create a new instance of Accelerometer
+        /// </summary>
+        /// <exception cref="AccelerometerFailedException">No default sensor is found</exception>
+        /// <exception cref="SensorFailedException">The maximum limit of Accelerometer instances has been reached (10)</exception>
 		public Accelerometer()
 		{
 			if (!IsSupported)
@@ -39,6 +56,7 @@ namespace Microsoft.Devices.Sensors
 
 		}
 
+        /// <inheritdoc cref="IDisposable.Dispose()"/>
         protected override void Dispose (bool disposing)
         {
             if (!IsDisposed)
@@ -52,7 +70,10 @@ namespace Microsoft.Devices.Sensors
             }
             base.Dispose(disposing);
         }
-
+        /// <summary>
+        /// Begin collecting accelerometer data
+        /// </summary>
+        /// <exception cref="AccelerometerFailedException">Accelerometer is already started</exception>
 		public override void Start()
 		{
 			if (started == false)
@@ -65,6 +86,9 @@ namespace Microsoft.Devices.Sensors
                 throw new AccelerometerFailedException("Failed to start accelerometer data acquisition. Data acquisition already started.", -1);
 		}
 
+        /// <summary>
+        /// Stop collection accelerometer data
+        /// </summary>
 		public override void Stop()
 		{
 			motionManager.StopAccelerometerUpdates();

@@ -14,6 +14,10 @@ namespace Microsoft.Xna.Framework.Graphics
         private readonly Queue<GraphicsDebugMessage> _cachedMessages;
         private bool _hasPushedFilters = false;
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="GraphicsDebug"/> class.
+        /// </summary>
+        /// <param name="device">The <see cref="GraphicsDevice"/> that the <see cref="GraphicsDebug"/> class is attached to.</param>
         public GraphicsDebug(GraphicsDevice device)
         {
             _device = device;
@@ -67,13 +71,13 @@ namespace Microsoft.Xna.Framework.Graphics
 
                 _infoQueue.ClearStoredMessages();
             }
-            
+
             if (_cachedMessages.Count > 0)
             {
                 message = _cachedMessages.Dequeue();
                 return true;
             }
-            
+
             // No messages to grab from DirectX.
             message = null;
             return false;

@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Graphics
 {
+    /// <summary>
+    /// Supports the processing of a texture compressed using ATC Explicit Alpha.
+    /// </summary>
     public class AtcExplicitBitmapContent : AtcBitmapContent
     {
         /// <summary>

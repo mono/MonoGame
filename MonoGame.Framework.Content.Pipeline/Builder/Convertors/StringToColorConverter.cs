@@ -6,8 +6,12 @@ using System.Text;
 
 namespace Microsoft.Xna.Framework.Content.Pipeline.Builder.Convertors
 {
+    /// <summary>
+    /// Class that provides methods to convert a <see cref="Color"/> to and from a string.
+    /// </summary>
 	public class StringToColorConverter : TypeConverter
 	{
+        /// <inheritdoc/>
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
             if (destinationType == typeof(string))
@@ -16,15 +20,17 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Builder.Convertors
             return base.CanConvertTo(context, destinationType);
         }
 
+        /// <inheritdoc/>
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType != typeof (string))            
+            if (destinationType != typeof (string))
                 return base.ConvertTo(context, culture, value, destinationType);
 
             var color = (Color)value;
             return string.Format("{0},{1},{2},{3}", color.R, color.G, color.B, color.A);
         }
 
+        /// <inheritdoc/>
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if (sourceType == typeof (string))
@@ -33,6 +39,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Builder.Convertors
 			return base.CanConvertFrom (context, sourceType);
 		}
 
+        /// <inheritdoc/>
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
             if (value.GetType() == typeof(string))
@@ -58,7 +65,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Builder.Convertors
                     }
                 }
                 else // Assume the string is in the MonoGame "r,g,b,a" format
-                {                    
+                {
                     string[] values = (strValue).Split(new char[] { ',' }, StringSplitOptions.None);
                     if (values.Length == 4)
                     {
