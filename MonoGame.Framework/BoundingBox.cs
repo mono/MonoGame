@@ -149,6 +149,89 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
+        ///   Determines if this <see cref="BoundingBox"/> contains or intersects with a specified <see cref="BoundingFrustum"/>.
+        ///   This method is precise and will significantly affect performance.
+        /// </summary>
+        /// <param name="frustum">The <see cref="BoundingFrustum"/> to test for overlap.</param>
+        /// <returns>
+        ///   A <see cref="ContainmentType"/> value indicating whether this <see cref="BoundingBox"/>
+        ///   contains or intersects the <paramref name="frustum"/>.
+        /// </returns>
+        public ContainmentType ContainsPrecise(BoundingFrustum frustum)
+        {
+            Vector3[] boxNormals =
+            [
+                Vector3.Up,
+                Vector3.Right,
+                Vector3.Forward
+            ];
+
+            Vector3[] frustumNormals =
+            [
+                frustum.Left.Normal,
+                frustum.Right.Normal,
+                frustum.Top.Normal,
+                frustum.Bottom.Normal,
+                frustum.Far.Normal
+            ];
+
+            // allAxes = box normals + frustum normals + cross products of box normals and frustum normals
+            Vector3[] allAxes = new Vector3[23]; // 3 + 5 + 3 * 5
+
+            allAxes[0] = boxNormals[0];
+            allAxes[1] = boxNormals[1];
+            allAxes[2] = boxNormals[2];
+
+            for (int i = 0; i < frustumNormals.Length; i++)
+            {
+                allAxes[3 + i] = frustumNormals[i];
+                for (int j = 0; j < boxNormals.Length; j++)
+                {
+                    allAxes[8 + i * boxNormals.Length + j] = Vector3.Cross(frustumNormals[i], boxNormals[j]);
+                }
+            }
+
+            var boxCorners = GetCorners();
+            var frustumCorners = frustum.GetCorners();
+
+            bool intersects = false;
+
+            for (int i = 0; i < allAxes.Length; i++)
+            {
+                // Project both shapes on the axis
+
+                float boxMin = float.MaxValue, boxMax = float.MinValue;
+                float frustumMin = float.MaxValue, frustumMax = float.MinValue;
+
+                foreach (var point in boxCorners)
+                {
+                    var dot = Vector3.Dot(point, allAxes[i]);
+                    if (boxMin > dot) boxMin = dot;
+                    if (boxMax < dot) boxMax = dot;
+                }
+
+                foreach (var point in frustumCorners)
+                {
+                    var dot = Vector3.Dot(point, allAxes[i]);
+                    if (frustumMin > dot) frustumMin = dot;
+                    if (frustumMax < dot) frustumMax = dot;
+                }
+
+                // If we find a gap, we are sure the shapes are disjoint
+                if (boxMax < frustumMin || boxMin > frustumMax)
+                    return ContainmentType.Disjoint;
+                // If frustum projection isn't contained inside box projection - there is an intersection
+                else if (boxMax < frustumMax || boxMin > frustumMin)
+                    intersects = true;
+            }
+
+            if (intersects)
+                return ContainmentType.Intersects;
+
+            return ContainmentType.Contains;
+        }
+
+        /// <summary>
         ///   Check if this <see cref="BoundingBox"/> contains a <see cref="BoundingSphere"/>.
         /// </summary>
         /// <param name="sphere">The <see cref="BoundingSphere"/> to test for overlap.</param>
