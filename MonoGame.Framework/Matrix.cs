@@ -1674,7 +1674,9 @@ namespace Microsoft.Xna.Framework
         /// <returns>Hash code of this <see cref="Matrix"/>.</returns>
         public override int GetHashCode()
         {
-            return (((((((((((((((this.M11.GetHashCode() + this.M12.GetHashCode()) + this.M13.GetHashCode()) + this.M14.GetHashCode()) + this.M21.GetHashCode()) + this.M22.GetHashCode()) + this.M23.GetHashCode()) + this.M24.GetHashCode()) + this.M31.GetHashCode()) + this.M32.GetHashCode()) + this.M33.GetHashCode()) + this.M34.GetHashCode()) + this.M41.GetHashCode()) + this.M42.GetHashCode()) + this.M43.GetHashCode()) + this.M44.GetHashCode());
+            int h1 = HashCode.Combine(M11, M12, M13, M14, M21, M22, M23, M24);
+            int h2 = HashCode.Combine(M31, M32, M33, M34, M41, M42, M43, M44);
+            return HashCode.Combine(h1, h2);
         }
 
         /// <summary>
