@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Runtime.InteropServices;
 using MonoGame.Framework.Utilities;
@@ -253,7 +254,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 {
                     // Note: for compressed format Format.GetSize() returns the size of a 4x4 block
                     var tFullWidth = Math.Max(this.width >> level, 1) / 4 * pixelToT;
-                    var temp = new T[Math.Max(this.height >> level, 1) / 4 * tFullWidth];
+                    var temp = GetDataPool<T>.Pool.Rent(Math.Max(this.height >> level, 1) / 4 * tFullWidth);
                     GL.GetCompressedTexImage(TextureTarget.Texture2D, level, temp);
                     GraphicsExtensions.CheckGLError();
 
@@ -265,6 +266,7 @@ namespace Microsoft.Xna.Framework.Graphics
                         var dataStart = startIndex + r * tRectWidth;
                         Array.Copy(temp, tempStart, data, dataStart, tRectWidth);
                     }
+                    GetDataPool<T>.Pool.Return(temp);
                 }
                 //If we want the full texture rect == (0,0,width,height), we dont have to allocate a temp buffer to copy from.
                 else if (rect.X == 0 && rect.Y == 0 && this.width == rect.Width && this.height == rect.Height && pixelToT == 1)
@@ -276,7 +278,7 @@ namespace Microsoft.Xna.Framework.Graphics
                 {
                     // we need to convert from our format size to the size of T here
                     var tFullWidth = Math.Max(this.width >> level, 1) * Format.GetSize() / tSizeInByte;
-                    var temp = new T[Math.Max(this.height >> level, 1) * tFullWidth];
+                    var temp = GetDataPool<T>.Pool.Rent(Math.Max(this.height >> level, 1) * tFullWidth);
                     GL.GetTexImage(TextureTarget.Texture2D, level, glFormat, glType, temp);
                     GraphicsExtensions.CheckGLError();
 
@@ -288,6 +290,7 @@ namespace Microsoft.Xna.Framework.Graphics
                         var dataStart = startIndex + r * tRectWidth;
                         Array.Copy(temp, tempStart, data, dataStart, tRectWidth);
                     }
+                    GetDataPool<T>.Pool.Return(temp);
                 }
 #endif
             });
@@ -514,6 +517,12 @@ namespace Microsoft.Xna.Framework.Graphics
 
             public static Action<SetDataRectState<T>> Action =
                 (s) => s.texture.PlatformSetDataBody(s.level, s.arraySlice, s.rect, s.data, s.startIndex, s.elementCount);
+        }
+
+        private static class GetDataPool<T> where T : struct
+        {
+            // use int.MaxValue so arrays of any length can be saved in pool
+            public static readonly ArrayPool<T> Pool = ArrayPool<T>.Create(int.MaxValue, 1);
         }
     }
 }
