@@ -430,6 +430,10 @@ internal static class Sdl
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void d_sdl_setwindowmaximised(IntPtr window);
+        public static d_sdl_setwindowmaximised MaximizeWindow = FuncLoader.LoadFunction<d_sdl_setwindowmaximised>(NativeLibrary, "SDL_MaximizeWindow");   
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int d_sdl_getwindowflags(IntPtr window);
         public static d_sdl_getwindowflags GetWindowFlags = FuncLoader.LoadFunction<d_sdl_getwindowflags>(NativeLibrary, "SDL_GetWindowFlags");
 

@@ -53,6 +53,11 @@ namespace MonoGame.Tests.Framework
         {
             throw new NotImplementedException();
         }
+
+        public override void MaximizeWindow()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 #endif // !MONOMAC

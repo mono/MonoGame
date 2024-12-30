@@ -322,6 +322,11 @@ namespace Microsoft.Xna.Framework
             Sdl.Window.SetTitle(_handle, title);
         }
 
+        public override void MaximizeWindow()
+        {
+            Sdl.Window.MaximizeWindow(_handle);
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -265,6 +265,10 @@ namespace Microsoft.Xna.Framework
 	    /// <param name="title">The new title of the window.</param>
 		protected abstract void SetTitle (string title);
 
+#if DESKTOPGL
+        public abstract void MaximizeWindow();
+#endif 
+
 #if DIRECTX && WINDOWS
         /// <summary>
         /// Create a <see cref="GameWindow"/> based on the given <see cref="Game"/> and a fixed starting size.
