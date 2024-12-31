@@ -223,12 +223,17 @@ namespace Microsoft.Xna.Framework
             Sdl.Rectangle displayRect;
             Sdl.Display.GetBounds(displayIndex, out displayRect);
 
-            if (_willBeFullScreen != IsFullScreen || _hardwareSwitch != _game.graphicsDeviceManager.HardwareModeSwitch)
-            {
-                var fullscreenFlag = _game.graphicsDeviceManager.HardwareModeSwitch ? Sdl.Window.State.Fullscreen : Sdl.Window.State.FullscreenDesktop;
-                Sdl.Window.SetFullscreen(Handle, (_willBeFullScreen) ? fullscreenFlag : 0);
-                _hardwareSwitch = _game.graphicsDeviceManager.HardwareModeSwitch;
-            }
+            var changeFullscreenType = _hardwareSwitch != _game.graphicsDeviceManager.HardwareModeSwitch && IsFullScreen;
+            _hardwareSwitch = _game.graphicsDeviceManager.HardwareModeSwitch;
+
+            // setting fullscreen to false before resizing if going windowed
+            if (!_willBeFullScreen && IsFullScreen)
+                Sdl.Window.SetFullscreen(Handle, 0);
+
+            // setting fullscreen to desktop fullscreen or if hardware mode changed to false
+            if ((_willBeFullScreen && !IsFullScreen) || (changeFullscreenType && !_hardwareSwitch))
+                Sdl.Window.SetFullscreen(Handle, Sdl.Window.State.FullscreenDesktop);
+
             // If going to exclusive full-screen mode, force the window to minimize on focus loss (Windows only)
             if (CurrentPlatform.OS == OS.Windows)
             {
@@ -246,6 +251,10 @@ namespace Microsoft.Xna.Framework
                 _width = displayRect.Width;
                 _height = displayRect.Height;
             }
+
+            // setting fullscreen to hardware fulscreen after resizing if using hardware mode
+            if (((_willBeFullScreen && !IsFullScreen) || changeFullscreenType) && _hardwareSwitch)
+                Sdl.Window.SetFullscreen(Handle, Sdl.Window.State.Fullscreen);
 
             int ignore, minx = 0, miny = 0;
             Sdl.Window.GetBorderSize(_handle, out miny, out minx, out ignore, out ignore);
