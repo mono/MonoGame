@@ -1,0 +1,103 @@
+name: Build Native Libraries
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'native/monogame/**'
+      - '.github/workflows/build-native.yml'
+  pull_request:
+    paths:
+      - 'native/monogame/**'
+      - '.github/workflows/build-native.yml'
+
+jobs:
+  build-native:
+    name: build-native-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: monogame.native.dll
+            platform: windows
+          - os: ubuntu-latest
+            artifact: monogame.native.so
+            platform: linux
+          - os: macos-latest
+            artifact: monogame.native.dylib
+            platform: macos
+      fail-fast: false
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Premake5
+        uses: abel0b/setup-premake@v2.4
+        with:
+          version: "5.0.0-beta2"
+
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.1.1
+        with:
+          version: 1.3.283.0
+          cache: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Add msbuild to PATH
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      # Install specific Linux dependencies
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc-multilib g++-multilib
+
+      # Install specific macOS dependencies
+      - name: Install macOS Dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake
+
+      # Build native libraries
+      - name: Build Native Libraries
+        run: dotnet run --project build/Build.csproj -- --target="Build Native DesktopVK"
+        env:
+          VULKAN_SDK: ${{ env.VULKAN_SDK }}
+
+      # Upload platform-specific artifact
+      - name: Upload Native Library
+        uses: actions/upload-artifact@v3
+        with:
+          name: native-lib-${{ matrix.platform }}-${{ github.sha }}
+          path: |
+            Artifacts/monogame.native/${{ matrix.platform }}/desktopvk/Release/${{ matrix.artifact }}
+          retention-days: 90
+          if-no-files-found: error
+
+  # Create a combined artifact with all native libraries
+  combine-artifacts:
+    needs: build-native
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: native-libs
+
+      - name: Combine native libraries
+        uses: actions/upload-artifact@v3
+        with:
+          name: native-libraries-all-${{ github.sha }}
+          path: native-libs/*
+          retention-days: 90
+          if-no-files-found: error
