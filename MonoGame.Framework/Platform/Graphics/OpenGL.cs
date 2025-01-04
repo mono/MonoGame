@@ -1258,6 +1258,15 @@ namespace MonoGame.OpenGL
 
         internal static int SwapInterval { get; set; }
 
+        internal unsafe static int GetMaxSamples()
+        {
+            GetIntegerv = LoadFunction<GetIntegerDelegate> ("glGetIntegerv");
+
+            int maxSamples = 0;
+            GetIntegerv((int)GetPName.MaxSamples, &maxSamples);
+            return maxSamples;
+        }
+
         internal static void LoadEntryPoints ()
         {
             LoadPlatformEntryPoints ();
@@ -1455,7 +1464,7 @@ namespace MonoGame.OpenGL
                 GL.LoadFrameBufferObjectEXTEntryPoints();
             }
             if (GL.RenderbufferStorageMultisample == null)
-            {                
+            {
                 if (Extensions.Contains("GL_APPLE_framebuffer_multisample"))
                 {
                     GL.RenderbufferStorageMultisample = LoadFunction<GL.RenderbufferStorageMultisampleDelegate>("glRenderbufferStorageMultisampleAPPLE");

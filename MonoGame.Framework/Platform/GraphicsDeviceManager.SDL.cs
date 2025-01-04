@@ -2,7 +2,9 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
+using System;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.OpenGL;
 
 namespace Microsoft.Xna.Framework
 {
@@ -45,8 +47,24 @@ namespace Microsoft.Xna.Framework
 
             if (presentationParameters.MultiSampleCount > 0)
             {
+                var temporaryWindow = Sdl.Window.Create(
+                    "glContextInfoWindow",
+                    0,
+                    0,
+                    0,
+                    0,
+                    Sdl.Window.State.OpenGL |
+                    Sdl.Window.State.Hidden |
+                    Sdl.Window.State.InputFocus |
+                    Sdl.Window.State.MouseFocus
+                );
+                var temporaryGLContext = Sdl.GL.CreateContext(temporaryWindow);
+                var maxSamples = GL.GetMaxSamples();
+                Sdl.GL.DeleteContext(temporaryGLContext);
+                Sdl.Window.Destroy(temporaryWindow);
+
                 Sdl.GL.SetAttribute(Sdl.GL.Attribute.MultiSampleBuffers, 1);
-                Sdl.GL.SetAttribute(Sdl.GL.Attribute.MultiSampleSamples, presentationParameters.MultiSampleCount);
+                Sdl.GL.SetAttribute(Sdl.GL.Attribute.MultiSampleSamples, Math.Min(maxSamples, presentationParameters.MultiSampleCount));
             }
 
             ((SdlGameWindow)SdlGameWindow.Instance).CreateWindow();

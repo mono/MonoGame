@@ -3,11 +3,13 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.Utilities;
+using MonoGame.OpenGL;
 
 namespace Microsoft.Xna.Framework
 {
@@ -133,6 +135,12 @@ namespace Microsoft.Xna.Framework
             _handle = Sdl.Window.Create("", 0, 0,
                 GraphicsDeviceManager.DefaultBackBufferWidth, GraphicsDeviceManager.DefaultBackBufferHeight,
                 Sdl.Window.State.Hidden | Sdl.Window.State.FullscreenDesktop);
+
+            if (_handle == default)
+            {
+                var sdlError = Sdl.GetError();
+                throw new NoSuitableGraphicsDeviceException(sdlError);
+            }
         }
 
         internal void CreateWindow()
@@ -163,6 +171,12 @@ namespace Microsoft.Xna.Framework
                 Title == null ? AssemblyHelper.GetDefaultWindowTitle() : Title,
                 winx, winy, _width, _height, initflags
             );
+
+            if (_handle == default)
+            {
+                var sdlError = Sdl.GetError();
+                throw new NoSuitableGraphicsDeviceException(sdlError);
+            }
 
             Id = Sdl.Window.GetWindowId(_handle);
 
