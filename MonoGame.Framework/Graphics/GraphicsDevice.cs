@@ -1280,6 +1280,9 @@ namespace Microsoft.Xna.Framework.Graphics
             if (vertexDeclaration == null)
                 throw new ArgumentNullException("vertexDeclaration");
 
+            if (vertexDeclaration.VertexStride < ReflectionHelpers.FastSizeOf<T>())
+                throw new ArgumentOutOfRangeException("vertexDeclaration", "Vertex stride of vertexDeclaration should be at least as big as the stride of the actual vertices.");
+
             PlatformDrawUserPrimitives<T>(primitiveType, vertexData, vertexOffset, vertexDeclaration, vertexCount);
 
             unchecked
