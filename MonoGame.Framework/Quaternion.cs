@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Microsoft.Xna.Framework
@@ -1033,7 +1034,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public System.Numerics.Quaternion ToNumerics()
         {
-            return new System.Numerics.Quaternion(this.X, this.Y, this.Z, this.W);
+            return Unsafe.As<Quaternion, System.Numerics.Quaternion>(ref this);
         }
 
         #endregion

@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
+using System.Numerics;
 
 namespace Microsoft.Xna.Framework
 {
@@ -1340,7 +1342,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public System.Numerics.Vector3 ToNumerics()
         {
-            return new System.Numerics.Vector3(this.X, this.Y, this.Z);
+            return Unsafe.As<Vector3, System.Numerics.Vector3>(ref this);
         }
 
         #endregion

@@ -1343,7 +1343,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public System.Numerics.Vector2 ToNumerics()
         {
-            return new System.Numerics.Vector2(this.X, this.Y);
+            return Unsafe.As<Vector2, System.Numerics.Vector2>(ref this);
         }
 
         #endregion

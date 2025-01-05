@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.Xna.Framework
 {
@@ -321,6 +322,46 @@ namespace Microsoft.Xna.Framework
 	    public static bool IsPowerOfTwo(int value)
 	    {
 	         return (value > 0) && ((value & (value - 1)) == 0);
-	    }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Matrix"/>.
+        /// </summary>
+        public static Matrix ToMonoGame(this System.Numerics.Matrix4x4 matrix)
+        {
+            return Unsafe.As<System.Numerics.Matrix4x4, Matrix>(ref matrix);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Vector4"/>.
+        /// </summary>
+        public static Vector4 ToMonoGame(this System.Numerics.Vector4 vector)
+        {
+            return Unsafe.As<System.Numerics.Vector4, Vector4>(ref vector);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Vector2"/>.
+        /// </summary>
+        public static Vector2 ToMonoGame(this System.Numerics.Vector2 vector)
+        {
+            return Unsafe.As<System.Numerics.Vector2, Vector2>(ref vector);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Vector3"/>.
+        /// </summary>
+        public static Vector3 ToMonoGame(this System.Numerics.Vector3 vector)
+        {
+            return Unsafe.As<System.Numerics.Vector3, Vector3>(ref vector);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Quaternion"/>.
+        /// </summary>
+        public static Quaternion ToNumerics(this System.Numerics.Quaternion quaternion)
+        {
+            return Unsafe.As<System.Numerics.Quaternion, Quaternion>(ref quaternion);
+        }
     }
 }

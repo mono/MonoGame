@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Microsoft.Xna.Framework
@@ -2470,11 +2471,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public System.Numerics.Matrix4x4 ToNumerics()
         {
-            return new System.Numerics.Matrix4x4(
-                this.M11, this.M12, this.M13, this.M14,
-                this.M21, this.M22, this.M23, this.M24,
-                this.M31, this.M32, this.M33, this.M34,
-                this.M41, this.M42, this.M43, this.M44);
+            return Unsafe.As<Matrix, System.Numerics.Matrix4x4>(ref this);
         }
 
         #endregion

@@ -5,6 +5,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.Xna.Framework
 {
@@ -1266,7 +1267,7 @@ namespace Microsoft.Xna.Framework
         /// </summary>
         public System.Numerics.Vector4 ToNumerics()
         {
-            return new System.Numerics.Vector4(this.X, this.Y, this.Z, this.W);
+            return Unsafe.As<Vector4, System.Numerics.Vector4>(ref this);
         }
 
         #endregion
