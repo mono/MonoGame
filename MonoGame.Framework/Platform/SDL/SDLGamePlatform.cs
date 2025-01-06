@@ -328,6 +328,14 @@ namespace Microsoft.Xna.Framework
 
         public override void EndScreenDeviceChange(string screenDeviceName, int clientWidth, int clientHeight)
         {
+            // Convert pixels back to points
+            // Width and height come from back buffer or viewport
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                var scale = ((SdlGameWindow)Window).Scale;
+                clientWidth = (int)(clientWidth / scale);
+                clientHeight = (int)(clientHeight / scale);
+            }
             _view.EndScreenDeviceChange(screenDeviceName, clientWidth, clientHeight);
         }
 

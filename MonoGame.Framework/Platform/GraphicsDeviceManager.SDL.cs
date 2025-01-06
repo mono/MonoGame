@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework
 {
@@ -10,6 +11,14 @@ namespace Microsoft.Xna.Framework
     {
         partial void PlatformInitialize(PresentationParameters presentationParameters)
         {
+            // Convert points to pixels
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                var scale = ((SdlGameWindow)_game.Window).Scale;
+                _preferredBackBufferWidth = (int)(_preferredBackBufferWidth * scale);
+                _preferredBackBufferHeight = (int)(_preferredBackBufferHeight * scale);
+            }
+
             var surfaceFormat = _game.graphicsDeviceManager.PreferredBackBufferFormat.GetColorFormat();
             var depthStencilFormat = _game.graphicsDeviceManager.PreferredDepthStencilFormat;
 

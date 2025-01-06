@@ -3,6 +3,7 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
+using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Input
 {
@@ -15,7 +16,7 @@ namespace Microsoft.Xna.Framework.Input
         {
             return PrimaryWindow.Handle;
         }
-        
+
         private static void PlatformSetWindowHandle(IntPtr windowHandle)
         {
         }
@@ -39,6 +40,14 @@ namespace Microsoft.Xna.Framework.Input
             window.MouseState.X = x - clientBounds.X;
             window.MouseState.Y = y - clientBounds.Y;
 
+            // Yes, everything Mac OS tells us is in points, and so is the mouse position
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                var scale = ((SdlGameWindow)window).Scale;
+                window.MouseState.X = (int)(window.MouseState.X * scale);
+                window.MouseState.Y = (int)(window.MouseState.Y * scale);
+            }
+
             return window.MouseState;
         }
 
@@ -46,7 +55,15 @@ namespace Microsoft.Xna.Framework.Input
         {
             PrimaryWindow.MouseState.X = x;
             PrimaryWindow.MouseState.Y = y;
-            
+
+            // Get scale from primary window... Should be okay
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                var scale = ((SdlGameWindow)PrimaryWindow).Scale;
+                y = (int)(y * scale);
+                y = (int)(y / scale);
+            }
+
             Sdl.Mouse.WarpInWindow(PrimaryWindow.Handle, x, y);
         }
 

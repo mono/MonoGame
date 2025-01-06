@@ -82,6 +82,11 @@ namespace Microsoft.Xna.Framework
             }
         }
 
+        public float Scale
+        {
+            get { return _scale; }
+        }
+
         public static GameWindow Instance;
         public uint? Id;
         public bool IsFullScreen;
@@ -93,6 +98,7 @@ namespace Microsoft.Xna.Framework
         private string _screenDeviceName;
         private int _width, _height;
         private bool _wasMoved, _supressMoved;
+        private float _scale;
 
         public SdlGameWindow(Game game)
         {
@@ -130,9 +136,28 @@ namespace Microsoft.Xna.Framework
                 }
             }
 
+            var initflags =
+                Sdl.Window.State.Hidden |
+                Sdl.Window.State.FullscreenDesktop;
+
+            // Allow HiDPI for Mac OS
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                initflags |= Sdl.Window.State.AllowHighDPI;
+            }
+
             _handle = Sdl.Window.Create("", 0, 0,
                 GraphicsDeviceManager.DefaultBackBufferWidth, GraphicsDeviceManager.DefaultBackBufferHeight,
-                Sdl.Window.State.Hidden | Sdl.Window.State.FullscreenDesktop);
+                initflags);
+
+            // Calculate the backing scale factor
+            // Should be the same as -[NSWindow backingScaleFactor]
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                Sdl.Window.GetSize(_handle, out var windowWidth, out _);
+                Sdl.GL.GetDrawableSize(_handle, out var drawableWidth, out _);
+                _scale = (float)drawableWidth / windowWidth;
+            }
         }
 
         internal void CreateWindow()
@@ -142,6 +167,12 @@ namespace Microsoft.Xna.Framework
                 Sdl.Window.State.Hidden |
                 Sdl.Window.State.InputFocus |
                 Sdl.Window.State.MouseFocus;
+
+            // Allow HiDPI for Mac OS
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                initflags |= Sdl.Window.State.AllowHighDPI;
+            }
 
             if (_handle != IntPtr.Zero)
                 Sdl.Window.Destroy(_handle);
@@ -293,6 +324,13 @@ namespace Microsoft.Xna.Framework
 
         public void ClientResize(int width, int height)
         {
+            // SDL events report window size in points rather than pixels.
+            if (CurrentPlatform.OS == OS.MacOSX)
+            {
+                width = (int)(width * _scale);
+                height = (int)(height * _scale);
+            }
+
             // SDL reports many resize events even if the Size didn't change.
             // Only call the code below if it actually changed.
             if (_game.GraphicsDevice.PresentationParameters.BackBufferWidth == width &&
