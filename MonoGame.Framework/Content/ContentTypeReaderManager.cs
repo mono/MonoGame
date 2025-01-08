@@ -54,11 +54,14 @@ namespace Microsoft.Xna.Framework.Content
             return null;
         }
 
+#if NET45
         // Trick to prevent the linker removing the code, but not actually execute the code
         static bool falseflag = false;
+#endif
 
         internal ContentTypeReader[] LoadAssetReaders(ContentReader reader)
         {
+#if NET45
 #pragma warning disable 0219, 0649
             // Trick to prevent the linker removing the code, but not actually execute the code
             if (falseflag)
@@ -116,6 +119,7 @@ namespace Microsoft.Xna.Framework.Content
 #endif
             }
 #pragma warning restore 0219, 0649
+#endif
 
             // The first content byte i read tells me the number of content readers in this XNB file
             var numberOfReaders = reader.Read7BitEncodedInt();

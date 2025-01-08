@@ -187,7 +187,7 @@ namespace MonoGame.Framework.Utilities
         /// </summary>
         internal static int ManagedSizeOf(Type type)
         {
-            return Marshal.SizeOf(type);
+            return Marshal.SizeOf<Type>(type);
         }
 
     }

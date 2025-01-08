@@ -670,7 +670,7 @@ namespace MonoGame.OpenAL
             }
             try
             {
-                setBufferMode = (XRamExtension.SetBufferModeDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("EAXSetBufferMode"), typeof(XRamExtension.SetBufferModeDelegate));
+                setBufferMode = Marshal.GetDelegateForFunctionPointer<XRamExtension.SetBufferModeDelegate>(AL.alGetProcAddress("EAXSetBufferMode"));
             }
             catch (Exception)
             {
@@ -763,19 +763,19 @@ namespace MonoGame.OpenAL
                 return;
             }
 
-            alGenEffects = (alGenEffectsDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alGenEffects"), typeof(alGenEffectsDelegate));
-            alDeleteEffects = (alDeleteEffectsDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alDeleteEffects"), typeof(alDeleteEffectsDelegate));
-            alEffectf = (alEffectfDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alEffectf"), typeof(alEffectfDelegate));
-            alEffecti = (alEffectiDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alEffecti"), typeof(alEffectiDelegate));
-            alGenAuxiliaryEffectSlots = (alGenAuxiliaryEffectSlotsDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alGenAuxiliaryEffectSlots"), typeof(alGenAuxiliaryEffectSlotsDelegate));
-            alDeleteAuxiliaryEffectSlots = (alDeleteAuxiliaryEffectSlotsDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alDeleteAuxiliaryEffectSlots"), typeof(alDeleteAuxiliaryEffectSlotsDelegate));
-            alAuxiliaryEffectSloti = (alAuxiliaryEffectSlotiDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alAuxiliaryEffectSloti"), typeof(alAuxiliaryEffectSlotiDelegate));
-            alAuxiliaryEffectSlotf = (alAuxiliaryEffectSlotfDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alAuxiliaryEffectSlotf"), typeof(alAuxiliaryEffectSlotfDelegate));
+            alGenEffects = Marshal.GetDelegateForFunctionPointer<alGenEffectsDelegate>(AL.alGetProcAddress("alGenEffects"));
+            alDeleteEffects = Marshal.GetDelegateForFunctionPointer<alDeleteEffectsDelegate>(AL.alGetProcAddress("alDeleteEffects"));
+            alEffectf = Marshal.GetDelegateForFunctionPointer<alEffectfDelegate>(AL.alGetProcAddress("alEffectf"));
+            alEffecti = Marshal.GetDelegateForFunctionPointer<alEffectiDelegate>(AL.alGetProcAddress("alEffecti"));
+            alGenAuxiliaryEffectSlots = Marshal.GetDelegateForFunctionPointer<alGenAuxiliaryEffectSlotsDelegate>(AL.alGetProcAddress("alGenAuxiliaryEffectSlots"));
+            alDeleteAuxiliaryEffectSlots = Marshal.GetDelegateForFunctionPointer<alDeleteAuxiliaryEffectSlotsDelegate>(AL.alGetProcAddress("alDeleteAuxiliaryEffectSlots"));
+            alAuxiliaryEffectSloti = Marshal.GetDelegateForFunctionPointer<alAuxiliaryEffectSlotiDelegate>(AL.alGetProcAddress("alAuxiliaryEffectSloti"));
+            alAuxiliaryEffectSlotf = Marshal.GetDelegateForFunctionPointer<alAuxiliaryEffectSlotfDelegate>(AL.alGetProcAddress("alAuxiliaryEffectSlotf"));
 
-            alGenFilters = (alGenFiltersDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alGenFilters"), typeof(alGenFiltersDelegate));
-            alFilteri = (alFilteriDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alFilteri"), typeof(alFilteriDelegate));
-            alFilterf = (alFilterfDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alFilterf"), typeof(alFilterfDelegate));
-            alDeleteFilters = (alDeleteFiltersDelegate)Marshal.GetDelegateForFunctionPointer(AL.alGetProcAddress("alDeleteFilters"), typeof(alDeleteFiltersDelegate));
+            alGenFilters = Marshal.GetDelegateForFunctionPointer<alGenFiltersDelegate>(AL.alGetProcAddress("alGenFilters"));
+            alFilteri = Marshal.GetDelegateForFunctionPointer<alFilteriDelegate>(AL.alGetProcAddress("alFilteri"));
+            alFilterf = Marshal.GetDelegateForFunctionPointer<alFilterfDelegate>(AL.alGetProcAddress("alFilterf"));
+            alDeleteFilters = Marshal.GetDelegateForFunctionPointer<alDeleteFiltersDelegate>(AL.alGetProcAddress("alDeleteFilters"));
 
             IsInitialized = true;
         }

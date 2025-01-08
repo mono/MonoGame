@@ -9,6 +9,7 @@
     <PackageId>MonoGame.Framework.DesktopGL</PackageId>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <CopyContentFiles>True</CopyContentFiles>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
   <!-- NETFX reference assemblies let us target .NET Framework on Mac/Linux without Mono -->

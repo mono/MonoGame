@@ -2,14 +2,14 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class ModelReader : ContentTypeReader<Model>
 	{
 //      List<VertexBuffer> vertexBuffers = new List<VertexBuffer>();

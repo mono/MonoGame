@@ -2,13 +2,12 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
-
-using Microsoft.Xna.Framework.Content;
-
 namespace Microsoft.Xna.Framework.Content
 {
-	internal class Int64Reader : ContentTypeReader<long>
+    #if !NET45
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
+    internal class Int64Reader : ContentTypeReader<long>
 	{
 		public Int64Reader ()
 		{

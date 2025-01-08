@@ -2,13 +2,15 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-using System;
 using System.IO;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class VideoReader : ContentTypeReader<Video>
     {
         protected internal override Video Read(ContentReader input, Video existingInstance)

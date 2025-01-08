@@ -3,11 +3,12 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class StringReader : ContentTypeReader<String>
     {
         public StringReader()
