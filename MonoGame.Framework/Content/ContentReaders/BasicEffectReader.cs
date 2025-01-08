@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     internal class BasicEffectReader : ContentTypeReader<BasicEffect>
     {
         protected internal override BasicEffect Read(ContentReader input, BasicEffect existingInstance)

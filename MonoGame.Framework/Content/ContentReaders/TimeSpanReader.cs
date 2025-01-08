@@ -4,11 +4,10 @@
 
 using System;
 
-using Microsoft.Xna.Framework.Content;
-
 namespace Microsoft.Xna.Framework.Content
 {
-	internal class TimeSpanReader : ContentTypeReader<TimeSpan>
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    internal class TimeSpanReader : ContentTypeReader<TimeSpan>
 	{
 		public TimeSpanReader ()
 		{

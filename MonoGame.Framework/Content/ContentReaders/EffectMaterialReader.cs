@@ -10,7 +10,8 @@ using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content
 {
-	internal class EffectMaterialReader : ContentTypeReader<EffectMaterial>
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    internal class EffectMaterialReader : ContentTypeReader<EffectMaterial>
 	{
 		protected internal override EffectMaterial Read (ContentReader input, EffectMaterial existingInstance)
 		{

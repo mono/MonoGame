@@ -4,6 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     class MatrixReader : ContentTypeReader<Matrix>
     {
         protected internal override Matrix Read(ContentReader input, Matrix existingInstance)

@@ -7,6 +7,7 @@ namespace Microsoft.Xna.Framework.Content
     /// <summary>
     /// External reference reader, provided for compatibility with XNA Framework built content
     /// </summary>
+	[System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     internal class ExternalReferenceReader : ContentTypeReader
     {
         public ExternalReferenceReader()

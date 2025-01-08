@@ -11,6 +11,7 @@ using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     internal class ReflectiveReader<T> : ContentTypeReader
     {
         delegate void ReadElement(ContentReader input, object parent);

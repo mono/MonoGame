@@ -7,6 +7,7 @@ using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     internal class MultiArrayReader<T> : ContentTypeReader<Array>
     {
         ContentTypeReader elementReader;

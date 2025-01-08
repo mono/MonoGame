@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     class IndexBufferReader : ContentTypeReader<IndexBuffer>
     {
         protected internal override IndexBuffer Read(ContentReader input, IndexBuffer existingInstance)

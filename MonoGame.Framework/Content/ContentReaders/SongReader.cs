@@ -9,7 +9,8 @@ using MonoGame.Framework.Utilities;
 
 namespace Microsoft.Xna.Framework.Content
 {
-	internal class SongReader : ContentTypeReader<Song>
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    internal class SongReader : ContentTypeReader<Song>
 	{
 		protected internal override Song Read(ContentReader input, Song existingInstance)
 		{

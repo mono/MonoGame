@@ -6,6 +6,7 @@ using System;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     internal class DateTimeReader : ContentTypeReader<DateTime>
     {
         public DateTimeReader()

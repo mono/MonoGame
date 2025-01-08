@@ -4,6 +4,7 @@
 
 namespace Microsoft.Xna.Framework.Content
 {
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
     class BoundingBoxReader : ContentTypeReader<BoundingBox>
     {
         protected internal override BoundingBox Read(ContentReader input, BoundingBox existingInstance)

@@ -6,7 +6,8 @@ using System;
 
 namespace Microsoft.Xna.Framework.Content
 {
-	internal class NullableReader<T> : ContentTypeReader<T?> where T : struct
+    [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    internal class NullableReader<T> : ContentTypeReader<T?> where T : struct
     {
         ContentTypeReader elementReader;
 
