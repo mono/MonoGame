@@ -6,7 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
     [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     class AlphaTestEffectReader : ContentTypeReader<AlphaTestEffect>
     {
         protected internal override AlphaTestEffect Read(ContentReader input, AlphaTestEffect existingInstance)

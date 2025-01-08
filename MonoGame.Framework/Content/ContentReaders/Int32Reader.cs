@@ -4,7 +4,9 @@
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
     [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class Int32Reader : ContentTypeReader<int>
     {
         public Int32Reader()

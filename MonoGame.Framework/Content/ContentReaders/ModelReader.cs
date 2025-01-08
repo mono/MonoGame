@@ -7,7 +7,9 @@ using System.Collections.Generic;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
     [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class ModelReader : ContentTypeReader<Model>
 	{
 //      List<VertexBuffer> vertexBuffers = new List<VertexBuffer>();

@@ -6,7 +6,9 @@ using System;
 
 namespace Microsoft.Xna.Framework.Content
 {
+    #if !NET45
     [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)]
+    #endif
     internal class EnumReader<T> : ContentTypeReader<T>
     {
         ContentTypeReader elementReader;

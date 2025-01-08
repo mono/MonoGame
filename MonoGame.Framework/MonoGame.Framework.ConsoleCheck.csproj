@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
-    <DefineConstants>WINDOWS;XNADESIGNPROVIDED;STBSHARP_INTERNAL</DefineConstants>
+    <DefineConstants>WINDOWS;XNADESIGNPROVIDED;STBSHARP_INTERNAL;NET45</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>true</UseWindowsForms>
     <Description>Fake console assembly that checks if MonoGame's code is still compatible with the private console implementations and building against .NET 4.5.2 and C# 5.</Description>
