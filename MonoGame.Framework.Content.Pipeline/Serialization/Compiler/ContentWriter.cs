@@ -123,7 +123,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
         /// <summary>
         /// All content has been written, so now finalize the header, footer and anything else that needs finalizing.
         /// </summary>
-        public override void Flush()
+        public void FinalizeContent()
         {
             // Write shared resources to the end of body stream
             WriteSharedResources();
@@ -173,7 +173,6 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
                         compressedStream.Dispose();
                 }
             }
-            base.Flush();
         }
 
         /// <summary>

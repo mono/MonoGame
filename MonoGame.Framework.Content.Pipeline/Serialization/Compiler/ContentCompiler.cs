@@ -162,6 +162,7 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler
             using (var writer = new ContentWriter(this, stream, targetPlatform, targetProfile, compressContent, rootDirectory, referenceRelocationPath))
             {
                 writer.WriteObject(content);
+                writer.FinalizeContent();
                 writer.Flush();
             }
         }
